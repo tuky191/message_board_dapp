@@ -45,15 +45,15 @@ const _exec =
 
 // ==== execute contract ====
 
-export const createPost = async (wallet, messages) =>
-  _exec({
-    create_post: {
-      title: message.subject,
-      body: message.content
-    }
-  })(wallet);
+export const increment = _exec({ increment: {} });
 
-export const likeMessage = async (wallet, index) =>
+export const reset = async (wallet, count) =>
+  _exec({ reset: { count } })(wallet);
+
+export const createMessage = async (wallet, message) =>
   _exec({
-    select_like_message: { index }
+    submit_message: {
+      subject: message.subject,
+      content: message.content    
+    }
   })(wallet);
