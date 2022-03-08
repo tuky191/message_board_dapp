@@ -12,29 +12,34 @@ import * as query from './contract/query'
 import { ConnectWallet } from './components/ConnectWallet'
 
 function App() {
-  const [count, setCount] = useState(null)
-  const [updating, setUpdating] = useState(true)
-  const [resetValue, setResetValue] = useState(0)
-
-  const { status } = useWallet()
-
+  const [messages, setMessages] = useState ([])
+  const [loading, setLoading] = useState(false);
   const connectedWallet = useConnectedWallet()
 
   useEffect(() => {
-    const prefetch = async () => {
+    (async () => {
+      setLoading(true);
       if (connectedWallet) {
-        setCount((await query.getCount(connectedWallet)).count)
+        let { messages } = await query.getMessages(connectedWallet);
+        console.log(posts);
+        setMessages(messages);
       }
-      setUpdating(false)
-    }
-    prefetch()
-  }, [connectedWallet])
+      setLoading(false);
+    })();
+  }, [connectedWallet]);
 
-  const onClickIncrement = async () => {
-    setUpdating(true)
-    await execute.increment(connectedWallet)
-    setCount((await query.getCount(connectedWallet)).count)
-    setUpdating(false)
+  const onSubmitNewMessage = async ([]) => {
+    setLoading(true);
+    try {
+      await execute.createPost(connectedWallet, post);
+      posts.push(post);
+      setPosts(posts);
+    }
+    catch (e) {
+      setLoading(false);
+      throw e;
+    }
+    setLoading(false);
   }
 
   const onClickReset = async () => {
@@ -47,29 +52,17 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <div style={{ display: 'inline' }}>
-          COUNT: {count} {updating ? '(updating . . .)' : ''}
-          <button onClick={onClickIncrement} type="button">
-            {' '}
-            +{' '}
-          </button>
-        </div>
-        {status === WalletStatus.WALLET_CONNECTED && (
-          <div style={{ display: 'inline' }}>
-            <input
-              type="number"
-              onChange={(e) => setResetValue(+e.target.value)}
-              value={resetValue}
-            />
-            <button onClick={onClickReset} type="button">
-              {' '}
-              reset{' '}
-            </button>
-          </div>
-        )}
-        <ConnectWallet />
-      </header>
+      <AppHeader
+        onSubmitNewMessage={(event) => onSubmitNewMessage(event)} />
+      <div className="AppContent">
+        {connectedWallet
+          ? <PostsList
+            posts={posts}
+            toggleUpvote={toggleUpvote} />
+          : <Card className="AppConnectWallet" title="Connect your wallet to see the posts" />
+        }
+      </div>
+      {loading && <Loader position="fixed" />}
     </div>
   )
 }

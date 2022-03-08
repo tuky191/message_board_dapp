@@ -5,11 +5,23 @@
     {
       "type": "object",
       "required": [
-        "increment"
+        "submit_message"
       ],
       "properties": {
-        "increment": {
-          "type": "object"
+        "submit_message": {
+          "type": "object",
+          "required": [
+            "content",
+            "subject"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            }
+          }
         }
       },
       "additionalProperties": false
@@ -17,18 +29,19 @@
     {
       "type": "object",
       "required": [
-        "reset"
+        "like_message"
       ],
       "properties": {
-        "reset": {
+        "like_message": {
           "type": "object",
           "required": [
-            "count"
+            "index"
           ],
           "properties": {
-            "count": {
+            "index": {
               "type": "integer",
-              "format": "int32"
+              "format": "uint32",
+              "minimum": 0.0
             }
           }
         }

@@ -8,3 +8,11 @@ export const getCount = async (wallet) => {
   })
   return lcd.wasm.contractQuery(contractAdress(wallet), { get_count: {} })
 }
+
+export function getMessages(wallet) {
+  const lcd = new LCDClient({
+    URL: wallet.network.lcd,
+    chainID: wallet.network.chainID,
+  })
+  return lcd.wasm.contractQuery(contractAdress(wallet), { get_messages: {} });
+}
