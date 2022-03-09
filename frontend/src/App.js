@@ -7,117 +7,83 @@ import {
   WalletStatus,
 } from '@terra-money/wallet-provider'
 
+import DiscussionBoard from './components/DiscussionBoard'
 import * as execute from './contract/execute'
 import * as query from './contract/query'
 import { ConnectWallet } from './components/ConnectWallet'
+ 
+  const App = () => {
+    const [messages, setMessages] = useState([{
+      owner: '',
+      subject: '',
+      content: '',
+      likes: []
+    }])
+    const [updating, setUpdating] = useState(true)
+    const { status } = useWallet()
+    const connectedWallet = useConnectedWallet()
+    const allPosts = []
+    const [posts, setPosts] = useState([])
+    
+    useEffect(() => {
+      (async () => {
+        setUpdating(true);
+        if (connectedWallet) {
+          let { messages } = await query.getMessages(connectedWallet);
+          console.log(messages);
+          setMessages(messages);
+          for (let i = 0; i < messages.length; i++) {
+            allPosts.push({ profileImage: 'https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg',
+                            owner: messages[i].owner,
+                            subject: messages[i].subject,
+                            content: messages[i].content,
+                            date: new Date('01 Jan 2020 01:12:00 GMT')
+          })
+          } 
+        }
+        setPosts([...allPosts]);
+        setUpdating(false);
+      })();
+    }, [connectedWallet]);
 
-function App() {
-  const [count, setCount] = useState(null)
-  const [messages, setMessages] = useState([])
-  const [updating, setUpdating] = useState(true)
-  const [resetValue, setResetValue] = useState(0)
 
-  const { status } = useWallet()
-
-  const connectedWallet = useConnectedWallet()
-
-  /*
-  useEffect(() => {
-    const prefetch = async () => {
-      if (connectedWallet) {
-        setCount(0)
-        SetMessages((await query.getMessages(connectedWallet)))
-      }
-      setUpdating(false)
-    }
-    prefetch()
-  }, [connectedWallet])
-*/
-  useEffect(() => {
-    (async () => {
+    const submitPost = async (subject, content) => {
       setUpdating(true);
-      if (connectedWallet) {
+      try {
+        let message = {};
+        message.subject = subject;
+        message.content = content;
+        await execute.createMessage(connectedWallet, message);
         let { messages } = await query.getMessages(connectedWallet);
-        console.log(messages);
         setMessages(messages);
+        for (let i = 0; i < messages.length; i++) {
+          allPosts.push({
+            profileImage: 'https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg',
+            owner: messages[i].owner,
+            subject: messages[i].subject,
+            content: messages[i].content,
+            date: new Date('01 Jan 2020 01:12:00 GMT')
+          })
+        } 
+        setPosts([...allPosts]);
+      }
+      catch (e) {
+        setUpdating(false);
+        throw e;
       }
       setUpdating(false);
-    })();
-  }, [connectedWallet]);
-
-  /*
-  useEffect(() => {
-    const prefetch_message = async () => {
-      if (connectedWallet) {
-        SetMessages((await query.getMessages(connectedWallet)))
-        //console.log(messages)
-      }
-      setUpdating(false)
     }
-    prefetch_message()
-  }, [connectedWallet])
-*/
-
-  const onClickIncrement = async () => {
-    setUpdating(true)
-    await execute.increment(connectedWallet)
-    //setCount((await query.getCount(connectedWallet)).count)
-    setUpdating(false)
-    console.log(connectedWallet)
-  }
-
-  const onClickReset = async () => {
-    setUpdating(true)
-    console.log(resetValue)
-    await execute.reset(connectedWallet, resetValue)
-    //setCount((await query.getCount(connectedWallet)).count)
-    setUpdating(false)
-  }
-
-  const onSubmitNewPost = async (message) => {
-    setUpdating(true);
-    try {
-      message = {};
-      message.subject = 'test subject';
-      message.content = 'test content';
-      await execute.createMessage(connectedWallet, message);
-      setMessages((await query.getMessages(connectedWallet)))
-    }
-    catch (e) {
-      setUpdating(false);
-      throw e;
-    }
-    setUpdating(false);
-  }
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <div style={{ display: 'inline' }}>
-          Messages: {messages.length} {updating ? '(updating . . .)' : ''}
-          {console.log(messages.length)}
-          <button onClick={onSubmitNewPost} type="button">
-            {' '}
-            +{' '}
-          </button>
-        </div>      
+    return (
+      
+      <div className='App'>
         {status === WalletStatus.WALLET_CONNECTED && (
-          <div style={{ display: 'inline' }}>
-            <input
-              type="number"
-              onChange={(e) => setResetValue(+e.target.value)}
-              value={resetValue}
-            />
-            <button onClick={onClickReset} type="button">
-              {' '}
-              reset{' '}
-            </button>
+          <div>
+            <DiscussionBoard posts={posts} onSubmit={submitPost} />
           </div>
         )}
         <ConnectWallet />
-      </header>
-    </div>
-  )
-}
+      </div>
+    )
+  }
 
 export default App
