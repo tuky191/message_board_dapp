@@ -6,7 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Post from './Post'
 import PostEditor from './PostEditor'
 import Button from 'react-bootstrap/Button';
-import { Form, Input, Modal } from 'antd';
+import { Modal } from 'antd';
+import { DisconnectWallet } from './DisconnectWallet';
 
 
 import styles from './index.module.css'
@@ -107,8 +108,6 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
     }
 
     const submitPost = () => {
-        setTimeout(2000);
-
         onSubmit(subject, text)
         setText('')
         setSubject('')
@@ -123,13 +122,12 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
 
     return (
         <div className='container'>
-            <div className='d-flex flex-row justify-content-left mt-1'>
-                <Button 
-                    variant="primary"
-                    onClick={showModal} type="button">
-                    Add Message
-                </Button>
-                <Modal title="Modal Title"
+            <div >
+                <>
+                <Button variant="outline-success" onClick={showModal} > Add Message </Button>{' '}
+                <DisconnectWallet />
+                </>
+                <Modal
                     visible={isModalVisible}
                     confirmLoading={isModalLoading}
                     onOk={async () => {
@@ -138,8 +136,6 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                                 setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
                                 setIsModalLoading(true);
                                 setIsModalVisible(false);
-                                console.log('here');
-
                             });
                         } catch {
                             return console.log('Oops errors!');
@@ -158,7 +154,10 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                         </div>
                     ]}
                     >
-                    <p>Sample Modal contents</p>
+                    <p> 
+                         
+                         
+                    </p>
                     <React.Fragment>
                         <div className='row'>
                             <div className='col'>

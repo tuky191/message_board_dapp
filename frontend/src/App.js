@@ -76,12 +76,12 @@ import { ConnectWallet } from './components/ConnectWallet'
     return (
       
       <div className='App'>
+        <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
           <div>
             <DiscussionBoard posts={posts} onSubmit={submitPost} />
           </div>
         )}
-        <ConnectWallet />
       </div>
     )
   }
