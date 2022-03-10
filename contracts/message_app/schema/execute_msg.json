@@ -12,14 +12,28 @@
           "type": "object",
           "required": [
             "content",
-            "subject"
+            "created",
+            "image",
+            "subject",
+            "thread_index"
           ],
           "properties": {
             "content": {
               "type": "string"
             },
+            "created": {
+              "type": "string"
+            },
+            "image": {
+              "type": "string"
+            },
             "subject": {
               "type": "string"
+            },
+            "thread_index": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0.0
             }
           }
         }
@@ -42,6 +56,34 @@
               "type": "integer",
               "format": "uint32",
               "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "update_profile"
+      ],
+      "properties": {
+        "update_profile": {
+          "type": "object",
+          "required": [
+            "created",
+            "nickname",
+            "profile_picture"
+          ],
+          "properties": {
+            "created": {
+              "type": "string"
+            },
+            "nickname": {
+              "type": "string"
+            },
+            "profile_picture": {
+              "type": "string"
             }
           }
         }

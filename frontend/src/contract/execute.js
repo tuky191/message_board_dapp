@@ -49,7 +49,19 @@ export const createMessage = async (wallet, message) =>
   _exec({
     submit_message: {
       subject: message.subject,
-      content: message.content    
+      content: message.content,
+      created: message.created,
+      image: message.image,
+      thread_index: message.thread_index,    
+    }
+  })(wallet);
+
+export const updateProfile = async (wallet, message) =>
+  _exec({
+    submit_message: {
+      subject: message.nickname,
+      profile_picture: message.profile_picture,
+      created: message.created
     }
   })(wallet);
 

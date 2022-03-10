@@ -15,7 +15,6 @@ import "./DiscussionBoard.css";
 const DiscussionBoard = ({ onSubmit, posts }) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
-    
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalLoading, setIsModalLoading] = useState(true);
     const perPage = 100
@@ -32,7 +31,6 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                     posts.length - 1
                 )
             )
-
             setCurrentPage(pageCount - 1)
         } else if (posts.length % perPage === 0 && posts.length > perPage) {
             setPagePosts(posts.slice(posts.length - perPage, posts.length))
@@ -51,61 +49,49 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
         setIsModalVisible(true);
     };
 
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
-
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-
-
-    const buildDate = (date) => {
-        const months = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December'
-        ]
-        return (
-            months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
-        )
-    }
-
-    const addZero = (i) => {
-        if (i < 10) {
-            i = '0' + i
+    const timeSince = (date) => {
+        if (typeof date !== 'object') {
+            date = new Date(Number(date));
         }
-        return i
-    }
+        console.log(new Date());
+        console.log(date);
+        var seconds = Math.floor((new Date() - date) / 1000);
+        var intervalType;
 
-    const buildTime = (date) => {
-        let hours = date.getHours()
-        let mornOrNight = 'AM'
-
-        if (hours > 12 && hours < 24) {
-            hours -= 12
-            mornOrNight = 'PM'
+        var interval = Math.floor(seconds / 31536000);
+        if (interval >= 1) {
+            intervalType = 'year';
+        } else {
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                intervalType = 'month';
+            } else {
+                interval = Math.floor(seconds / 86400);
+                if (interval >= 1) {
+                    intervalType = 'day';
+                } else {
+                    interval = Math.floor(seconds / 3600);
+                    if (interval >= 1) {
+                        intervalType = "hour";
+                    } else {
+                        interval = Math.floor(seconds / 60);
+                        if (interval >= 1) {
+                            intervalType = "minute";
+                        } else {
+                            interval = seconds;
+                            intervalType = "second";
+                        }
+                    }
+                }
+            }
         }
 
-        return (
-            addZero(hours) +
-            ':' +
-            addZero(date.getMinutes()) +
-            ' ' +
-            mornOrNight +
-            ' ' +
-            date.toLocaleTimeString('en-us', { timeZoneName: 'short' }).split(' ')[2]
-        )
-    }
+        if (interval > 1 || interval === 0) {
+            intervalType += 's';
+        }
+
+        return interval + ' ' + intervalType;
+    };
 
     const submitPost = () => {
         onSubmit(subject, text)
@@ -184,12 +170,10 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                             <div className="inner-main-body p-2 p-sm-3 collapse forum-content show">
                                 
                                 {pagePosts.map((post, idx) => {
-                                    const newDate = buildDate(post.date);
-                                    const newTime = buildTime(post.date);
-
+                                    const newTime = timeSince(post.created);
                                     return (
                                         <React.Fragment key={idx}>
-                                            <Post {...post} date={newDate} time={newTime} />
+                                            <Post {...post} time={newTime} index={idx} />
                                             <hr className={`mt-0`} />
                                         </React.Fragment>
                                     );
@@ -297,8 +281,6 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                     </div>
                 </div>
             </div>
-
-
                 </div>
             <></>
         </>

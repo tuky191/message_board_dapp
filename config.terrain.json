@@ -17,7 +17,8 @@
           }
         },
         "instantiateMsg": {
-          "messages": []
+          "messages": [],
+          "profiles": []
         }
       }
     }

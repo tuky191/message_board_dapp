@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { useState, useEffect } from 'react'
 import DOMPurify from 'dompurify'
 import ReactHtmlParser from 'react-html-parser'
 import Avatar from 'react-avatar'
@@ -8,11 +8,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './post.module.css'
 import LikeButton from './LikeButton'
 
-const Post = ({ profileImage, owner, time, subject, content, date }) => {
+const Post = ({ profileImage, owner, time, subject, content, image, likes, index }) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
-    return (
+    const [PostlikesCount, setPostLikesCount] = useState(likes.length)
 
+    
+    useEffect(() => {
+        (async () => {
+            setPostLikesCount(PostlikesCount)
+        })();
+    }, []);
+    
+    return (
         <>
         <div className="card mb-2">
             <div className="card-body p-2 p-sm-3">
@@ -23,14 +31,14 @@ const Post = ({ profileImage, owner, time, subject, content, date }) => {
                         <span className="text-secondary">
                                 <div className={styles.text}>{ReactHtmlParser(clean)}</div>
                         </span>
-                            <p className="text-muted"><a href="">{owner}</a> posted on <span className="text-secondary font-weight-bold">{date} {time}</span></p>
+                            <p className="text-muted"><a href="">{owner}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                         <span className="text-muted"><span className="text-secondary font-weight-bold">
-                                <span className=""><LikeButton /></span>
+                                <span className=""><LikeButton index={index} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} /></span>
 
                         </span></span>
                     </div>
                     <div className="text-muted small text-center align-self-center">
-                        <span className="d-none d-sm-inline-block"><i className="fa fa-heart"></i> 19</span>
+                            <span className="d-none d-sm-inline-block"><i className="fa fa-heart"></i> {PostlikesCount}</span>
                     </div>
                 </div>
             </div>

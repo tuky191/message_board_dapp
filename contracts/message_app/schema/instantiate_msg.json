@@ -3,13 +3,20 @@
   "title": "InstantiateMsg",
   "type": "object",
   "required": [
-    "messages"
+    "messages",
+    "profiles"
   ],
   "properties": {
     "messages": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/Post"
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Profile"
       }
     }
   },
@@ -22,12 +29,21 @@
       "type": "object",
       "required": [
         "content",
+        "created",
+        "image",
         "likes",
         "owner",
-        "subject"
+        "subject",
+        "thread_index"
       ],
       "properties": {
         "content": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "image": {
           "type": "string"
         },
         "likes": {
@@ -40,6 +56,34 @@
           "$ref": "#/definitions/Addr"
         },
         "subject": {
+          "type": "string"
+        },
+        "thread_index": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "required": [
+        "created",
+        "nickname",
+        "owner",
+        "profile_picture"
+      ],
+      "properties": {
+        "created": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Addr"
+        },
+        "profile_picture": {
           "type": "string"
         }
       }

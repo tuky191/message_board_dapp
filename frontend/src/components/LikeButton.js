@@ -7,20 +7,28 @@ import * as execute from '../contract/execute'
 
 const particleList = Array.from(Array(10));
 
-const LikeButton = () => {
-    const [liked, setLiked] = useState(null);
+
+const LikeButton = ({ index, setPostLikesCount, PostlikesCount }) => {
+    const [liked, setLiked] = useState(false);
     const [clicked, setClicked] = useState(false);
     const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
+    
+    const updateTerra = async (index) => {
+        await execute.likeMessage(connectedWallet, index)
+        if (liked) {
+            setPostLikesCount(PostlikesCount - 1)
+        } else {
+            setPostLikesCount(PostlikesCount + 1)
+        }
+        setLiked(!liked)
+        setClicked(true)
+    }
 
-//likeMessage
     return (
         <button
             onClick={() => {
-                let like_message_index = 0;
-                execute.likeMessage(connectedWallet, like_message_index);
-                setLiked(!liked);
-                setClicked(true);
+                updateTerra(index)
             }}
             onAnimationEnd={() => setClicked(false)}
             className={cn("like-button-wrapper", {

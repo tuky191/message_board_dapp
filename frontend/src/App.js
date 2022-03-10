@@ -16,6 +16,9 @@ import { ConnectWallet } from './components/ConnectWallet'
       owner: '',
       subject: '',
       content: '',
+      date: '',
+      image: '',
+      created: '',
       likes: []
     }])
     const [updating, setUpdating] = useState(true)
@@ -36,7 +39,9 @@ import { ConnectWallet } from './components/ConnectWallet'
                             owner: messages[i].owner,
                             subject: messages[i].subject,
                             content: messages[i].content,
-                            date: new Date('01 Jan 2020 01:12:00 GMT')
+                            created: messages[i].created,
+                            image: messages[i].image,
+                            likes: messages[i].likes,
           })
           } 
         }
@@ -45,22 +50,32 @@ import { ConnectWallet } from './components/ConnectWallet'
       })();
     }, [connectedWallet]);
 
+    const convert_epoch = (date) =>{
+      return Date.parse(date)
+    }
     const submitPost = async (subject, content) => {
       setUpdating(true);
       try {
         let message = {};
+        let date = new Date();
         message.subject = subject;
         message.content = content;
+        message.created = convert_epoch(date).toString();
+        message.image = 'https://bootdey.com/img/Content/avatar/avatar1.png';
+        message.thread_index = 0;
         await execute.createMessage(connectedWallet, message);
         let { messages } = await query.getMessages(connectedWallet);
         setMessages(messages);
+        //likes?.find(like => like === connectedWallet.walletAddress)
         for (let i = 0; i < messages.length; i++) {
           allPosts.push({
             profileImage: 'https://bootdey.com/img/Content/avatar/avatar1.png',
             owner: messages[i].owner,
             subject: messages[i].subject,
             content: messages[i].content,
-            date: new Date('01 Jan 2020 01:12:00 GMT')
+            created: messages[i].created,
+            image: messages[i].image,
+            likes: messages[i].likes,
           })
         } 
         setPosts([...allPosts]);
