@@ -6,7 +6,6 @@ import {
   useConnectedWallet,
   WalletStatus,
 } from '@terra-money/wallet-provider'
-
 import DiscussionBoard from './components/DiscussionBoard'
 import * as execute from './contract/execute'
 import * as query from './contract/query'
@@ -33,7 +32,7 @@ import { ConnectWallet } from './components/ConnectWallet'
           console.log(messages);
           setMessages(messages);
           for (let i = 0; i < messages.length; i++) {
-            allPosts.push({ profileImage: 'https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg',
+            allPosts.push({ profileImage: 'https://bootdey.com/img/Content/avatar/avatar1.png',
                             owner: messages[i].owner,
                             subject: messages[i].subject,
                             content: messages[i].content,
@@ -46,7 +45,6 @@ import { ConnectWallet } from './components/ConnectWallet'
       })();
     }, [connectedWallet]);
 
-
     const submitPost = async (subject, content) => {
       setUpdating(true);
       try {
@@ -58,7 +56,7 @@ import { ConnectWallet } from './components/ConnectWallet'
         setMessages(messages);
         for (let i = 0; i < messages.length; i++) {
           allPosts.push({
-            profileImage: 'https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg',
+            profileImage: 'https://bootdey.com/img/Content/avatar/avatar1.png',
             owner: messages[i].owner,
             subject: messages[i].subject,
             content: messages[i].content,
