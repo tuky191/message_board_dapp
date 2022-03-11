@@ -27,15 +27,9 @@ const PostEditor = ({ text, setText, subject, setSubject }) => {
                     <label>Title:</label>
                     <Form.Item> <Input onChange={handleChangeSubject} /></Form.Item>
                 </div>
-            <div className="form-group">
-                <label>Message:</label>
-                    <Form.Item><MyCustomQuill value={text || ''} setText={setText}></MyCustomQuill></Form.Item>
-            </div>
                 <div className="form-group">
-                    <div className="custom-file form-control-sm mt-3" >
-                        <input type="file" className="custom-file-input" id="customFile" multiple="" />
-                        <label className="custom-file-label" htmlFor="customFile">Attachment</label>
-                    </div>
+                    <label>Message:</label>
+                        <Form.Item><MyCustomQuill value={text || ''} setText={setText}></MyCustomQuill></Form.Item>
                 </div>
             </div>
         </Form>

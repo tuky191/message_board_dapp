@@ -29,7 +29,9 @@ const Post = ({ profileImage, owner, time, subject, content, image, likes, index
                     <div className="media-body">
                             <a href="#" data-toggle="collapse" data-target=".forum-content" className="text-body"><div className={styles.subject}>{ReactHtmlParser(clean_subject)}</div></a>
                         <span className="text-secondary">
-                                <div className={styles.text}>{ReactHtmlParser(clean)}</div>
+                                <div className="container">
+                                    <div className={styles.text}>{ReactHtmlParser(clean)}</div>
+                                </div>
                         </span>
                             <p className="text-muted"><a href="">{owner}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                         <span className="text-muted"><span className="text-secondary font-weight-bold">

@@ -14,7 +14,9 @@ body{
         height: calc(100vh - 3.5rem - 48px);
     }
 }
-
+.ql-editor{
+    min-height:300px;
+}
 .inner-main,
 .inner-sidebar {
     position: absolute;

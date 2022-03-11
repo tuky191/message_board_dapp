@@ -1,7 +1,36 @@
 import React from 'react'
-import ReactQuill from 'react-quill'
+import ReactQuill, { Quill } from 'react-quill';
+import EmbedBlot from 'quill';
+import ImageResize from "quill-image-resize-module--fix-imports-error";
+import { ImageDrop } from 'quill-image-drop-module';
 import 'react-quill/dist/quill.snow.css'
 import { IPFS } from "./IPFS";
+
+let BlockEmbed = Quill.import('blots/block/embed');
+class ImageBlot extends BlockEmbed {
+    static create(value) {
+        console.log(value)
+        let node = super.create();
+        node.setAttribute('alt', value.alt);
+        node.setAttribute('src', value.url);
+        node.setAttribute('class', "img-fluid");
+        return node;
+    }
+
+    static value(node) {
+        return {
+            alt: node.getAttribute('alt'),
+            url: node.getAttribute('src')
+        };
+    }
+}
+
+ImageBlot.blotName = 'image';
+ImageBlot.tagName = 'img';
+
+Quill.register("modules/imageResize", ImageResize);
+//Quill.register('modules/imageDrop', ImageDrop);
+Quill.register(ImageBlot);
 
 const toolbarContainer = [
     [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
@@ -37,7 +66,7 @@ class MyCustomQuill extends React.Component {
         console.log(this.state)
     }
 
-    imageHandler = () => {
+    imageHandler = (image, callback) => {
         this.quillEditor = this.quillRef.getEditor()
         const input = document.createElement('input')
         input.setAttribute('type', 'file')
@@ -49,17 +78,18 @@ class MyCustomQuill extends React.Component {
             let url = 'https://ipfs.io/ipfs/' + res
             console.log(res)
             const range = this.quillEditor.getSelection()
-            console.log(url)
-            // this part the image is inserted
-            // by 'image' option below, you just have to put src(link) of img here. 
-            this.quillEditor.insertEmbed(range.index, 'image', url)
+            let value = {url: url,
+                        alt: url}
+            this.quillEditor.insertEmbed(range.index, 'image', value, "user")
         }
     }
     modules = {
         toolbar: {
             container: toolbarContainer,
             handlers: {image: this.imageHandler}
-        } 
+        },
+     //   imageDrop: true,
+        imageResize: { parchment: Quill.import('parchment')}
     }
 
     formats = [

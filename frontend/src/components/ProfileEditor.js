@@ -3,11 +3,16 @@ import { useState } from 'react'
 import ReactQuill from 'react-quill'
 import './editor.css'
 import 'react-quill/dist/quill.snow.css'
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Button, Image } from 'antd';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./DiscussionBoard.css";
+import { IPFS } from "./IPFS";
+
+
+
+
 const ProfileEditor = ({ text, setText, subject, setSubject }) => {
     const handleChange = (newValue) => {
         setText(newValue)
@@ -16,16 +21,38 @@ const ProfileEditor = ({ text, setText, subject, setSubject }) => {
     const handleChangeSubject = e => {
         setSubject(e.target.value)
     };
+
+    const uploadFile = IPFS();
+
+    const uploadProfilePic = () => {
+        const input = document.createElement('input')
+        input.setAttribute('type', 'file')
+        input.setAttribute('accept', 'image/*')
+        input.click()
+        input.onchange = async () => {
+            const file = input.files[0]
+            const res = await uploadFile(file)
+            let url = 'https://ipfs.io/ipfs/' + res
+            return url
+        }
+        
+    }
+    function ImageButton({ src }) {
+        return <Button onClick={uploadProfilePic}>
+               
+                <Image src={src} />
+              </Button>
+    }
+
     return <div>
         <Form>
             <div className="modal-body">
                 <div className="form-group">
-                    <label>How do you call yourself:</label>
-                    <Form.Item> <Input onChange={handleChangeSubject} /></Form.Item>
+                    <Form.Item> <Input placeholder="What's your name?" onChange={handleChangeSubject} /></Form.Item>
                 </div>
                 <div className="form-group">
                     <label>Profile Pic:</label>
-                    <Form.Item><button /></Form.Item>
+                    <Form.Item><ImageButton /></Form.Item>
                 </div>
                 <div className="form-group">
                     <div className="custom-file form-control-sm mt-3" >
