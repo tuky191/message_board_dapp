@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { FileUpload } from "react-ipfs-uploader";
-import { create } from 'ipfs-http-client'
+import { IPFS } from "./IPFS";
+
 const toolbarContainer = [
     [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
     [{ 'font': [] }],
@@ -20,50 +20,7 @@ const toolbarContainer = [
 
     ['clean']
 ]
-const client = create('https://ipfs.infura.io:5001/api/v0')
-
-
-const uploadFile = async({ image, callback }) => {
-
-    const { cid } = await client.add(image)
-    
-    console.log(cid);
-    var data = new FormData();
-    data.append('image', image);
-
-
-
-/*    let response = await client.upload({
-        image: 'https://www.rouming.cz/upload/ticha_dohoda.jpg',
-        title: 'Meme',
-        description: 'Dank Meme',
-    });
-    console.log(response.data);
-*/
-    
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.imgur.com/3/image', true);
-    xhr.setRequestHeader('Authorization', 'Client-ID ' + 'b01105111941579d3a4fd011d4a103b63e7d6484');
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            var response = JSON.parse(xhr.responseText);
-            if (response.status === 200 && response.success) {
-                console.log(response.data.link);
-                callback(response.data.link);
-            } else {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    callback(e.target.result);
-                };
-                reader.readAsDataURL(data.image);
-            }
-        }
-    }
-    console.log(xhr);
-    xhr.send(data);
-    
-}
-
+const uploadFile = IPFS();
 
 
 class MyCustomQuill extends React.Component {
@@ -76,7 +33,7 @@ class MyCustomQuill extends React.Component {
 
     handleChange(value) {
         this.setState({ text: value })
-        this.state.setText({ text: this.state.text })
+        this.state.setText(this.state.text)
         console.log(this.state)
     }
 
@@ -88,16 +45,14 @@ class MyCustomQuill extends React.Component {
         input.click()
         input.onchange = async () => {
             const file = input.files[0]
-            console.log(input)
-            console.log(file)
-            //const test = await fetchAnswer(file)
             const res = await uploadFile(file)
+            let url = 'https://ipfs.io/ipfs/' + res
+            console.log(res)
             const range = this.quillEditor.getSelection()
-            const link = res.data[0].url
-
+            console.log(url)
             // this part the image is inserted
             // by 'image' option below, you just have to put src(link) of img here. 
-            this.quillEditor.insertEmbed(range.index, 'image', link)
+            this.quillEditor.insertEmbed(range.index, 'image', url)
         }
     }
     modules = {
