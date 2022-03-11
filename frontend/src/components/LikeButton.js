@@ -8,19 +8,18 @@ import * as execute from '../contract/execute'
 const particleList = Array.from(Array(10));
 
 
-const LikeButton = ({ index, setPostLikesCount, PostlikesCount }) => {
-    const [liked, setLiked] = useState(false);
+const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount }) => {
     const [clicked, setClicked] = useState(false);
     const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
-    
+    const initiateLikes = () => {
+        return (likes?.find(like => like === connectedWallet.walletAddress ? true : false))
+    }
+    const [liked, setLiked] = useState(initiateLikes);
+
     const updateTerra = async (index) => {
         await execute.likeMessage(connectedWallet, index)
-        if (liked) {
-            setPostLikesCount(PostlikesCount - 1)
-        } else {
-            setPostLikesCount(PostlikesCount + 1)
-        }
+        setPostLikesCount(liked ? PostlikesCount - 1 : PostlikesCount + 1)
         setLiked(!liked)
         setClicked(true)
     }

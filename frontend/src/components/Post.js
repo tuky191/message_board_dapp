@@ -33,7 +33,7 @@ const Post = ({ profileImage, owner, time, subject, content, image, likes, index
                         </span>
                             <p className="text-muted"><a href="">{owner}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                         <span className="text-muted"><span className="text-secondary font-weight-bold">
-                                <span className=""><LikeButton index={index} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} /></span>
+                                <span className=""><LikeButton index={index} likes={likes} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} /></span>
 
                         </span></span>
                     </div>

@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Post from './Post'
 import PostEditor from './PostEditor'
+import ProfileEditor from './ProfileEditor'
 import Button from 'react-bootstrap/Button';
 import { Modal } from 'antd';
 import { DisconnectWallet } from './DisconnectWallet';
@@ -15,7 +16,10 @@ import "./DiscussionBoard.css";
 const DiscussionBoard = ({ onSubmit, posts }) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
+    
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
+
     const [isModalLoading, setIsModalLoading] = useState(true);
     const perPage = 100
     const [pageCount, setPageCount] = useState(0)
@@ -49,12 +53,14 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
         setIsModalVisible(true);
     };
 
+    const showModalSettings = () => {
+        setIsSettingsModalVisible(true);
+    };
+
     const timeSince = (date) => {
         if (typeof date !== 'object') {
             date = new Date(Number(date));
         }
-        console.log(new Date());
-        console.log(date);
         var seconds = Math.floor((new Date() - date) / 1000);
         var intervalType;
 
@@ -99,6 +105,11 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
         setSubject('')
         setIsModalVisible(false)
     }
+    const submitSettings = () => {
+        onSubmit(subject, text)
+        setIsSettingsModalVisible(false)
+    }
+
 
     const onPageChange = ({ selected }) => {
         let offset = Math.ceil(selected * perPage)
@@ -122,7 +133,12 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                                     NEW DISCUSSION
                                 </button>
                             </div>
-
+                            <div className="inner-sidebar-header justify-content-center">
+                                <button className="btn btn-primary has-icon btn-block" type="button" data-toggle="modal" data-target="#threadModal" onClick={showModalSettings}>
+                                    <div> <i className="fa fa-cog" style={{position: 'relative', left: '-7px' }}></i> UPDATE PROFILE</div>
+                                    
+                                </button>
+                            </div>
                             <div className="inner-sidebar-body p-0">
                                 <div className="p-3 h-100" data-simplebar="init">
                                     <div className="simplebar-wrapper" style={{ margin: '-16px' }}> 
@@ -279,6 +295,29 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                             </div>
                         </Modal>                        
                     </div>
+                    <div>
+                        <Modal
+                            visible={isSettingsModalVisible}
+                            onCancel={() => {
+                                setIsSettingsModalVisible(false);
+                            }}
+                            className='modal-dialog modal-lg'
+                            title='Profile'
+                            footer={[
+                                <div className='row pt-2'>
+                                    <div className='col'>
+                                        <button onClick={submitSettings} className='btn btn-primary'>
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            ]}>
+                            <div>
+                                <ProfileEditor text={text} setText={setText} subject={subject} setSubject={setSubject} />
+                            </div>
+                        </Modal>
+                    </div>
+
                 </div>
             </div>
                 </div>

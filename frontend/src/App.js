@@ -63,6 +63,7 @@ import { ConnectWallet } from './components/ConnectWallet'
         message.created = convert_epoch(date).toString();
         message.image = 'https://bootdey.com/img/Content/avatar/avatar1.png';
         message.thread_index = 0;
+        console.log(message);
         await execute.createMessage(connectedWallet, message);
         let { messages } = await query.getMessages(connectedWallet);
         setMessages(messages);
