@@ -1,1 +1,1 @@
-5ae47426e410b579a6fa0bf4d966f4d477bfc089fbd2d9ae9ebeebdb72a09d93  message_app.wasm
+9c717e362f16054e3afc265c9e95d80526da05d42ba63846a3d41c5387bc32d3  message_app.wasm

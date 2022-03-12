@@ -11,15 +11,15 @@ import "./DiscussionBoard.css";
 import { IPFS } from "./IPFS";
 
 
+const ProfileEditor = ({ nickname, setNickname, profile_picture, setProfilePicture}) => {
+    
 
+    const handleChangeProfilePicture = (newValue) => {
+        setProfilePicture(newValue)
+    };
 
-const ProfileEditor = ({ text, setText, subject, setSubject }) => {
-    const handleChange = (newValue) => {
-        setText(newValue)
-    }
- 
-    const handleChangeSubject = e => {
-        setSubject(e.target.value)
+    const handleChange = e => {
+        setNickname(e.target.value)
     };
 
     const uploadFile = IPFS();
@@ -33,32 +33,33 @@ const ProfileEditor = ({ text, setText, subject, setSubject }) => {
             const file = input.files[0]
             const res = await uploadFile(file)
             let url = 'https://ipfs.io/ipfs/' + res
-            return url
+            handleChangeProfilePicture(url)
         }
         
     }
     function ImageButton({ src }) {
-        return <Button onClick={uploadProfilePic}>
-               
-                <Image src={src} />
-              </Button>
-    }
+        
+        return <Image src={profile_picture}
+            width={100}
+            height={100}
+            className={"rounded-circle"}
+            preview={{
+                visible: false,
+            }
+            }
+            onClick={uploadProfilePic}
+            alt="User"
+        />
 
+    }
     return <div>
         <Form>
             <div className="modal-body">
                 <div className="form-group">
-                    <Form.Item> <Input placeholder="What's your name?" onChange={handleChangeSubject} /></Form.Item>
+                    <Form.Item> <Input placeholder={"What's your name? It was " + nickname + ", just the other day."} onChange={handleChange} /></Form.Item>
                 </div>
                 <div className="form-group">
-                    <label>Profile Pic:</label>
                     <Form.Item><ImageButton /></Form.Item>
-                </div>
-                <div className="form-group">
-                    <div className="custom-file form-control-sm mt-3" >
-                        <input type="file" className="custom-file-input" id="customFile" multiple="" />
-                        <label className="custom-file-label" htmlFor="customFile">Attachment</label>
-                    </div>
                 </div>
             </div>
         </Form>

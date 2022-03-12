@@ -61,7 +61,7 @@ pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: St
 pub fn try_update_profile(deps: DepsMut, info: MessageInfo, nickname: String, profile_picture: String, created: String) -> Result<Response, ContractError> {
 
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
-        match state.profiles.iter_mut().find(|ref p| info.sender <= p.owner) {
+        match state.profiles.iter_mut().find(|ref p| info.sender == p.owner) {
             Some(profile) => {
                 profile.nickname = nickname;
                 profile.profile_picture = profile_picture;

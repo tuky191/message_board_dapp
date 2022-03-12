@@ -13,19 +13,24 @@ import { DisconnectWallet } from './DisconnectWallet';
 import styles from './index.module.css'
 import "./DiscussionBoard.css";
 
-const DiscussionBoard = ({ onSubmit, posts }) => {
+const DiscussionBoard = ({ onSubmit, posts, new_user }) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
-    
+    const [profile_picture, setProfilePicture] = useState('https://bootdey.com/img/Content/avatar/avatar1.png')
+    const [nickname, setNickname] = useState('Michal')
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
-
+    const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(new_user);
+    
+    //console.log(new_user)
+    //console.log(isSettingsModalVisible)
     const [isModalLoading, setIsModalLoading] = useState(true);
     const perPage = 100
     const [pageCount, setPageCount] = useState(0)
     const [pagePosts, setPagePosts] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     useEffect(() => {
+        setIsSettingsModalVisible(new_user)
+        
         setPageCount(Math.ceil(posts.length / perPage))
 
         if (posts.length % perPage !== 0 && posts.length > perPage) {
@@ -100,13 +105,20 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
     };
 
     const submitPost = () => {
-        onSubmit(subject, text)
+        onSubmit({
+            subject: subject,
+            content: text,
+            method: 'submitPost'
+        })
         setText('')
         setSubject('')
         setIsModalVisible(false)
     }
     const submitSettings = () => {
-        onSubmit(subject, text)
+        onSubmit({ nickname: nickname,
+            profile_picture: profile_picture,
+            method: 'submitProfile'
+        })
         setIsSettingsModalVisible(false)
     }
 
@@ -313,7 +325,7 @@ const DiscussionBoard = ({ onSubmit, posts }) => {
                                 </div>
                             ]}>
                             <div>
-                                <ProfileEditor text={text} setText={setText} subject={subject} setSubject={setSubject} />
+                                <ProfileEditor nickname={nickname} setNickname={setNickname} profile_picture={profile_picture} setProfilePicture={setProfilePicture} />
                             </div>
                         </Modal>
                     </div>

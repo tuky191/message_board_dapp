@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './post.module.css'
 import LikeButton from './LikeButton'
 
-const Post = ({ profileImage, owner, time, subject, content, image, likes, index }) => {
+const Post = ({ profileImage, owner, time, subject, content, image, alias, likes, index }) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
@@ -33,7 +33,7 @@ const Post = ({ profileImage, owner, time, subject, content, image, likes, index
                                     <div className={styles.text}>{ReactHtmlParser(clean)}</div>
                                 </div>
                         </span>
-                            <p className="text-muted"><a href="">{owner}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
+                            <p className="text-muted"><a href="" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                         <span className="text-muted"><span className="text-secondary font-weight-bold">
                                 <span className=""><LikeButton index={index} likes={likes} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} /></span>
 
