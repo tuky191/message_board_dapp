@@ -2,12 +2,14 @@
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr};
 use cw2::set_contract_version;
-
+use id_vec::{IdVec, Id};
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, MessagesResponse, ProfilesResponse};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, MessagesResponse, ProfilesResponse, ThreadsResponse};
 use crate::state::{State, STATE};
 use crate::state::Post;
 use crate::state::Profile;
+use crate::state::Thread;
+use std::cell::RefCell;
 
 
 // version info for migration info
@@ -24,6 +26,7 @@ pub fn instantiate(
     let state = State {
         messages: Vec::new(),
         profiles: Vec::new(),
+        threads: Vec::new(),
         owner: info.sender.clone(),
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
@@ -42,33 +45,62 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::SubmitMessage {subject, content, image, thread_index, created} => try_submit(deps, info, subject, content, image, thread_index, created),
+        ExecuteMsg::SubmitMessage {subject, content, attachement, thread_id, created} => try_submit(deps, info, subject, content, attachement, thread_id, created),
         ExecuteMsg::LikeMessage {index} => try_like(deps, info, index),
-        ExecuteMsg::UpdateProfile {nickname, profile_picture, created} => try_update_profile(deps, info, nickname, profile_picture, created),
+        ExecuteMsg::UpdateProfile {handle, avatar, bio, created} => try_update_profile(deps, info, handle, avatar, bio, created),
 
     }
 }
 
-pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, image: String, thread_index: u32, created: String) -> Result<Response, ContractError> {
+fn put_and_get_index<T>(v: &mut Vec<T>, item: T) -> usize {
+    let idx = v.len();
+    v.push(item);
+    idx
+}
+
+//This should be redesign for hashmap instead vec
+pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachement: String, thread_id: usize, created: String) -> Result<Response, ContractError> {
+    //First enter new post into messages vec, message_id is 0
+    let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created.clone());
+    //placeholder index
+
+    let mut index: usize = 0;
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
-        state.messages.push(Post::new(info.sender, subject, content, image, thread_index, created));
+        index = put_and_get_index(&mut state.messages, new_post.clone());
+        state.messages[index].message_id = index;
+        Ok(state)
+    })?;
+
+    STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
+        match state.threads.iter_mut().find(|ref p| thread_id == *p.thread_id_immut()) {
+            Some(thread) => {
+                //Need to refactor with references
+                thread.related_messages_ids().push(index);
+                *thread.thread_id() = thread_id;
+            }
+            None => {
+                let mut thread = Thread::new(Vec::new(), thread_id, created);
+                thread.related_messages_ids().push(index);
+                state.threads.push(thread);
+            }
+        }               
         Ok(state)
     })?;
 
     Ok(Response::new().add_attribute("method", "try_submit"))
 }
 
-pub fn try_update_profile(deps: DepsMut, info: MessageInfo, nickname: String, profile_picture: String, created: String) -> Result<Response, ContractError> {
+pub fn try_update_profile(deps: DepsMut, info: MessageInfo, handle: String, avatar: String, bio: String, created: String) -> Result<Response, ContractError> {
 
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
-        match state.profiles.iter_mut().find(|ref p| info.sender == p.owner) {
+        match state.profiles.iter_mut().find(|ref p| info.sender == *p.owner_immut()) {
             Some(profile) => {
-                profile.nickname = nickname;
-                profile.profile_picture = profile_picture;
+                *profile.handle() = handle;
+                *profile.avatar() = avatar;
+                *profile.bio() = bio;
             }
-            // o/w insert a new leaf at the end
             None => {
-                state.profiles.push(Profile::new(info.sender, nickname, profile_picture, created));
+                state.profiles.push(Profile::new(info.sender, handle, avatar, bio, created));
             }
         }               
         Ok(state)
@@ -95,14 +127,47 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetMessages {} => to_binary(&get_messages(deps)?),
         QueryMsg::GetMessageByAddress { addr } => to_binary(&get_message_by_addr(deps, addr)?),
         QueryMsg::GetProfiles {} => to_binary(&get_profiles(deps)?),
-        QueryMsg::GetProfileByAddress { addr } => to_binary(&get_profile_by_addr(deps, addr)?)        
+        QueryMsg::GetProfileByAddress { addr } => to_binary(&get_profile_by_addr(deps, addr)?),
+        QueryMsg::GetThreads {} => to_binary(&get_threads(deps)?),
+        QueryMsg::GetMessagesByThreadId { thread_id } => to_binary(&get_messages_by_thread_id(deps, thread_id)?)
+
     }
 }
 
 fn get_messages(deps: Deps) -> StdResult<MessagesResponse> {
     let state = STATE.load(deps.storage)?;
-    Ok(MessagesResponse { messages: state.messages })
+    let mut messages_with_id = Vec::new();
+        for i in 0..state.messages.len() {
+            let mut message = state.messages[i].clone();
+            message.message_id = i; 
+            messages_with_id.push(message);
+    }
+    Ok(MessagesResponse { messages: messages_with_id })
 }
+fn get_messages_by_thread_id(deps: Deps, thread_id: usize) -> StdResult<MessagesResponse> {
+    let state = STATE.load(deps.storage)?;
+    let messages = state.messages
+        .iter()
+        .filter(|&message| thread_id.eq(&message.thread_id))
+        .cloned()
+        .collect::<Vec<Post>>();
+
+    Ok(MessagesResponse { messages: messages })
+}
+
+fn get_threads(deps: Deps) -> StdResult<ThreadsResponse> {
+    let state = STATE.load(deps.storage)?;
+
+    let mut threads_with_id = Vec::new();
+        for i in 0..state.threads.len() {
+            let mut thread = state.threads[i].clone();
+            *thread.thread_id() = i; 
+            threads_with_id.push(thread);
+        }
+
+    Ok(ThreadsResponse { threads: threads_with_id })
+}
+
 
 fn get_message_by_addr(deps: Deps, addr: Addr) -> StdResult<MessagesResponse> {
     let state = STATE.load(deps.storage)?;
@@ -125,7 +190,7 @@ fn get_profile_by_addr(deps: Deps, addr: Addr) -> StdResult<ProfilesResponse> {
     
     let profiles = state.profiles
         .iter()
-        .filter(|&profile| addr.eq(profile.get_owner()))
+        .filter(|&profile| addr.eq(profile.owner_immut()))
         .cloned()
         .collect::<Vec<Profile>>();
     Ok(ProfilesResponse { profiles })
@@ -159,24 +224,70 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
 
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), image: String::from("imageId"), created: String::from("1234567890"), thread_index: 0};
-        println!("{:#?}", msg);
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+//      println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        let info = mock_info("anyone", &coins(2, "token"));
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessages {}).unwrap();
         let value: MessagesResponse = from_binary(&res).unwrap();
         let posts : Vec<Post> = value.messages;
         println!("{:#?}", posts);
-        assert_eq!(1, posts.len());
+        assert_eq!(2, posts.len());
         assert_eq!("some subject", posts.get(0).unwrap().get_subject());
         assert_eq!("some content", posts.get(0).unwrap().get_content());
 
-        assert_eq!("imageId", posts.get(0).unwrap().get_image());
+        assert_eq!("attachementId", posts.get(0).unwrap().get_attachement());
         assert_eq!("1234567890", posts.get(0).unwrap().get_created());
-        assert_eq!(0, posts.get(0).unwrap().get_thread_index());
+        assert_eq!(0, posts.get(0).unwrap().get_thread_id());
         assert_eq!("some content", posts.get(0).unwrap().get_content());
         assert_eq!(0, posts.get(0).unwrap().get_likes().len());
+
+        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetThreads {}).unwrap();
+        let value: ThreadsResponse = from_binary(&res).unwrap();
+        let threads : Vec<Thread> = value.threads;
+        println!("{:#?}", threads);
+        assert_eq!(1, threads.len());
+        assert_eq!(0, *threads.get(0).unwrap().thread_id_immut());
+        //assert_eq!("some content", threads.get(0).unwrap().get_related_messages());
+
     }
+  #[test]
+    fn get_threads() {
+
+        let mut deps = mock_dependencies(&coins(2, "token"));
+        let msg = InstantiateMsg { messages: Vec::new(), profiles: Vec::new() };
+        let info = mock_info("creator", &coins(2, "token"));
+        let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        let info = mock_info("anyone", &coins(2, "token"));
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        let info = mock_info("anyone", &coins(2, "token"));
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetThreads {}).unwrap();
+        let value: ThreadsResponse = from_binary(&res).unwrap();
+        let threads : Vec<Thread> = value.threads;
+        println!("{:#?}", threads);
+        assert_eq!(1, threads.len());
+        assert_eq!(0, *threads.get(0).unwrap().thread_id_immut());
+        
+        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessagesByThreadId {thread_id: 0}).unwrap();
+        let value: MessagesResponse = from_binary(&res).unwrap();
+        let threads : Vec<Post> = value.messages;
+        println!("{:#?}", threads);
+        assert_eq!(0, threads.get(0).unwrap().get_message_id());
+        assert_eq!(1, threads.get(1).unwrap().get_message_id());
+    }
+
+
     #[test]
     fn create_profile() {
         //GIVEN
@@ -186,7 +297,7 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
 
-        let msg = ExecuteMsg::UpdateProfile { nickname: String::from("BigBen"), profile_picture : String::from("ImageId"), created: String::from("1234567890")};
+        let msg = ExecuteMsg::UpdateProfile { handle: String::from("BigBen"), avatar: String::from("attachementId"), bio: String::from("Story of MY LIFE"), created: String::from("1234567890")};
         println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
@@ -195,9 +306,10 @@ mod tests {
         let profiles : Vec<Profile> = value.profiles;
         println!("{:#?}", profiles);
         assert_eq!(1, profiles.len());
-        assert_eq!("BigBen", profiles.get(0).unwrap().get_nickname());
-        assert_eq!("ImageId", profiles.get(0).unwrap().get_profile_picture());
-        assert_eq!("1234567890", profiles.get(0).unwrap().get_created());
+        assert_eq!("BigBen", profiles.get(0).unwrap().handle_immut());
+        assert_eq!("attachementId", profiles.get(0).unwrap().avatar_immut());
+        assert_eq!("Story of MY LIFE", profiles.get(0).unwrap().bio_immut());
+        assert_eq!("1234567890", profiles.get(0).unwrap().created_immut());
     }
     #[test]
     fn update_profile() {
@@ -208,7 +320,7 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("creator", &coins(2, "token"));
 
-        let msg = ExecuteMsg::UpdateProfile { nickname: String::from("BigBen"), profile_picture : String::from("ImageId"), created: String::from("1234567890")};
+        let msg = ExecuteMsg::UpdateProfile { handle: String::from("BigBen"), avatar : String::from("attachementId"), bio: String::from("Story of MY LIFE"), created: String::from("1234567890")};
         println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
@@ -219,12 +331,13 @@ mod tests {
         println!("{:#?}", profiles);
         
         assert_eq!(1, profiles.len());
-        assert_eq!("BigBen", profiles.get(0).unwrap().get_nickname());
-        assert_eq!("ImageId", profiles.get(0).unwrap().get_profile_picture());
-        assert_eq!("1234567890", profiles.get(0).unwrap().get_created());
+        assert_eq!("BigBen", profiles.get(0).unwrap().handle_immut());
+        assert_eq!("attachementId", profiles.get(0).unwrap().avatar_immut());
+        assert_eq!("Story of MY LIFE", profiles.get(0).unwrap().bio_immut());
+        assert_eq!("1234567890", profiles.get(0).unwrap().created_immut());
         
         let info = mock_info("creator", &coins(2, "token"));
-        let msg = ExecuteMsg::UpdateProfile { nickname: String::from("SmallSam"), profile_picture : String::from("unicorn_shooting_star.jpg"), created: String::from("1234567890")};
+        let msg = ExecuteMsg::UpdateProfile { handle: String::from("SmallSam"), avatar : String::from("unicorn_shooting_star.jpg"), bio : String::from("I come from small willage, just south of New New York"), created: String::from("1234567890")};
         println!("{:#?}", msg);
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetProfiles {}).unwrap();
@@ -232,9 +345,10 @@ mod tests {
         let profiles : Vec<Profile> = value.profiles;
         println!("{:#?}", profiles);
         assert_eq!(1, profiles.len());
-        assert_eq!("SmallSam", profiles.get(0).unwrap().get_nickname());
-        assert_eq!("unicorn_shooting_star.jpg", profiles.get(0).unwrap().get_profile_picture());
-        assert_eq!("1234567890", profiles.get(0).unwrap().get_created());   
+        assert_eq!("SmallSam", profiles.get(0).unwrap().handle_immut());
+        assert_eq!("unicorn_shooting_star.jpg", profiles.get(0).unwrap().avatar_immut());
+        assert_eq!("I come from small willage, just south of New New York", profiles.get(0).unwrap().bio_immut());
+        assert_eq!("1234567890", profiles.get(0).unwrap().created_immut());   
     }
 
     #[test]
@@ -244,7 +358,7 @@ mod tests {
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), image: String::from("imageId"), created: String::from("1234567890"), thread_index: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
 
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
@@ -257,4 +371,31 @@ mod tests {
         let posts: &Post = value.messages.get(0).unwrap();
         assert_eq!(1, posts.get_likes().len());
     }
+
+        #[test]
+    fn test_id_vec() {
+
+        let mut deps = mock_dependencies(&coins(2, "token"));
+        let msg = InstantiateMsg { messages: Vec::new(), profiles: Vec::new() };
+        let info = mock_info("creator", &coins(2, "token"));
+        let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
+        let info = mock_info("anyone", &coins(2, "token"));
+        //let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+        let content = String::from("some content");
+        let subject = String::from("some subject");
+        let attachement = String::from("attachementId");
+        let created = String::from("1234567890");
+        let thread_id = 0;
+
+        let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created);
+        let mut posts = IdVec::new();
+        let post_id: Id<Post> = posts.insert(new_post);     
+        println!("{:#?} -> {:#?}", post_id, posts.get(post_id));
+        let retrieved_post = posts.get(post_id);
+        println!("{:#?}", post_id);
+        println!("{:#?}", retrieved_post.unwrap());
+    }
+
+
+
 }

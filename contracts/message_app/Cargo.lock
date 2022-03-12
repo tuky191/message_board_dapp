@@ -302,6 +302,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "id-vec"
+version = "0.5.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c9c16dab9e3409c9b131c028e63f51b1bf7be3735d8b285de46ffdcacf7b718"
+
+[[package]]
 name = "itoa"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -334,6 +340,7 @@ dependencies = [
  "cosmwasm-storage",
  "cw-storage-plus",
  "cw2",
+ "id-vec",
  "schemars",
  "serde",
  "thiserror",

@@ -2,8 +2,8 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use cosmwasm_std::Addr;
 use crate::state::Post;
+use crate::state::Thread;
 use crate::state::Profile;
-
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -14,9 +14,9 @@ pub struct InstantiateMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    SubmitMessage {content : String, subject: String, image: String, thread_index:u32, created: String},
+    SubmitMessage {content : String, subject: String, attachement: String, thread_id:usize, created: String},
     LikeMessage {index: u32},
-    UpdateProfile {nickname: String, profile_picture: String, created: String},
+    UpdateProfile {handle: String, avatar: String, bio: String,created: String},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -26,7 +26,9 @@ pub enum QueryMsg {
     GetMessages {},
     GetMessageByAddress { addr: Addr },
     GetProfiles {},
-    GetProfileByAddress { addr: Addr }
+    GetProfileByAddress { addr: Addr },
+    GetThreads {},
+    GetMessagesByThreadId {thread_id: usize}
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -37,4 +39,9 @@ pub struct MessagesResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ProfilesResponse {
     pub profiles: Vec<Profile>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ThreadsResponse {
+    pub threads: Vec<Thread>,
 }
