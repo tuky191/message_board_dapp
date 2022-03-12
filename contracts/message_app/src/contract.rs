@@ -2,15 +2,13 @@
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr};
 use cw2::set_contract_version;
-use id_vec::{IdVec, Id};
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, MessagesResponse, ProfilesResponse, ThreadsResponse};
 use crate::state::{State, STATE};
 use crate::state::Post;
 use crate::state::Profile;
 use crate::state::Thread;
-use std::cell::RefCell;
-
+use regex::Regex;
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:message_board";
@@ -67,7 +65,7 @@ pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: St
     let mut index: usize = 0;
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
         index = put_and_get_index(&mut state.messages, new_post.clone());
-        state.messages[index].message_id = index;
+        *state.messages[index].message_id() = index;
         Ok(state)
     })?;
 
@@ -129,26 +127,42 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::GetProfiles {} => to_binary(&get_profiles(deps)?),
         QueryMsg::GetProfileByAddress { addr } => to_binary(&get_profile_by_addr(deps, addr)?),
         QueryMsg::GetThreads {} => to_binary(&get_threads(deps)?),
-        QueryMsg::GetMessagesByThreadId { thread_id } => to_binary(&get_messages_by_thread_id(deps, thread_id)?)
+        QueryMsg::GetMessagesByThreadId { thread_id } => to_binary(&get_messages_by_thread_id(deps, thread_id)?),
+        QueryMsg::GetMessagesByContentOrSubject { content, subject } => to_binary(&get_messages_by_content_or_subject(deps, content, subject)?)
+        
 
     }
 }
 
+fn get_messages_by_content_or_subject(deps: Deps, content: String, subject: String) -> StdResult<MessagesResponse> {
+
+    let state = STATE.load(deps.storage)?;
+    let mut found_messages = Vec::new();
+    let pattern_content = format!("{}{}{}", ".*", content, ".*");
+    let pattern_subject = format!("{}{}{}", ".*", subject, ".*");
+    let re_content = Regex::new(&pattern_content).unwrap();
+    let re_subject = Regex::new(&pattern_subject).unwrap();
+        for i in 0..state.messages.len() {
+            if re_content.is_match(state.messages[i].content_immut()) && !content.is_empty()  {
+                found_messages.push(state.messages[i].clone());
+            }
+            if re_subject.is_match(state.messages[i].subject_immut()) && !subject.is_empty() {
+                found_messages.push(state.messages[i].clone());
+            }
+    }
+    Ok(MessagesResponse { messages: found_messages })
+}
+
+
 fn get_messages(deps: Deps) -> StdResult<MessagesResponse> {
     let state = STATE.load(deps.storage)?;
-    let mut messages_with_id = Vec::new();
-        for i in 0..state.messages.len() {
-            let mut message = state.messages[i].clone();
-            message.message_id = i; 
-            messages_with_id.push(message);
-    }
-    Ok(MessagesResponse { messages: messages_with_id })
+    Ok(MessagesResponse { messages: state.messages })
 }
 fn get_messages_by_thread_id(deps: Deps, thread_id: usize) -> StdResult<MessagesResponse> {
     let state = STATE.load(deps.storage)?;
     let messages = state.messages
         .iter()
-        .filter(|&message| thread_id.eq(&message.thread_id))
+        .filter(|&message| thread_id.eq(*&message.thread_id_immut()))
         .cloned()
         .collect::<Vec<Post>>();
 
@@ -174,7 +188,7 @@ fn get_message_by_addr(deps: Deps, addr: Addr) -> StdResult<MessagesResponse> {
     
     let messages = state.messages
         .iter()
-        .filter(|&message| addr.eq(message.get_owner()))
+        .filter(|&message| addr.eq(*&message.owner_immut()))
         .cloned()
         .collect::<Vec<Post>>();
     Ok(MessagesResponse { messages })
@@ -238,14 +252,14 @@ mod tests {
         let posts : Vec<Post> = value.messages;
         println!("{:#?}", posts);
         assert_eq!(2, posts.len());
-        assert_eq!("some subject", posts.get(0).unwrap().get_subject());
-        assert_eq!("some content", posts.get(0).unwrap().get_content());
+        assert_eq!("some subject", posts.get(0).unwrap().subject_immut());
+        assert_eq!("some content", posts.get(0).unwrap().content_immut());
 
-        assert_eq!("attachementId", posts.get(0).unwrap().get_attachement());
-        assert_eq!("1234567890", posts.get(0).unwrap().get_created());
-        assert_eq!(0, posts.get(0).unwrap().get_thread_id());
-        assert_eq!("some content", posts.get(0).unwrap().get_content());
-        assert_eq!(0, posts.get(0).unwrap().get_likes().len());
+        assert_eq!("attachementId", posts.get(0).unwrap().attachement_immut());
+        assert_eq!("1234567890", posts.get(0).unwrap().created_immut());
+        assert_eq!(0, *posts.get(0).unwrap().thread_id_immut());
+        assert_eq!("some content", posts.get(0).unwrap().content_immut());
+        assert_eq!(0, posts.get(0).unwrap().likes_immut().len());
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetThreads {}).unwrap();
         let value: ThreadsResponse = from_binary(&res).unwrap();
@@ -283,8 +297,9 @@ mod tests {
         let value: MessagesResponse = from_binary(&res).unwrap();
         let threads : Vec<Post> = value.messages;
         println!("{:#?}", threads);
-        assert_eq!(0, threads.get(0).unwrap().get_message_id());
-        assert_eq!(1, threads.get(1).unwrap().get_message_id());
+               
+        assert_eq!(0, *threads.get(0).unwrap().message_id_immut());
+        assert_eq!(1, *threads.get(1).unwrap().message_id_immut());
     }
 
 
@@ -369,12 +384,12 @@ mod tests {
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessages {}).unwrap();
         let value: MessagesResponse = from_binary(&res).unwrap();
         let posts: &Post = value.messages.get(0).unwrap();
-        assert_eq!(1, posts.get_likes().len());
+        assert_eq!(1, posts.likes_immut().len());
     }
 
         #[test]
     fn test_id_vec() {
-
+        use id_vec::{IdVec, Id};
         let mut deps = mock_dependencies(&coins(2, "token"));
         let msg = InstantiateMsg { messages: Vec::new(), profiles: Vec::new() };
         let info = mock_info("creator", &coins(2, "token"));
@@ -394,6 +409,54 @@ mod tests {
         let retrieved_post = posts.get(post_id);
         println!("{:#?}", post_id);
         println!("{:#?}", retrieved_post.unwrap());
+    }
+
+    
+   #[test]
+    fn search_post_by_subject_or_content() {
+        //GIVEN
+        let mut deps = mock_dependencies(&coins(2, "token"));
+        let msg = InstantiateMsg { messages: Vec::new(), profiles: Vec::new() };
+        let info = mock_info("creator", &coins(2, "token"));
+        let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        //MESSAGE #1
+        let info = mock_info("anyone", &coins(2, "token"));
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("One Thing is certain, we cannot go that way."), subject : String::from("Subject from the other side"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        //MESSAGE #2
+        let info = mock_info("anyone", &coins(2, "token"));
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("Mary has a little lamb"), subject : String::from("Is this all there is for me"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        //SEARCH BY SUBJECT
+        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessagesByContentOrSubject {subject: String::from("the other side"), content: String::from("")}).unwrap();
+        let value: MessagesResponse = from_binary(&res).unwrap();
+        let posts : Vec<Post> = value.messages;
+        println!("{:#?}", posts);
+        assert_eq!(1, posts.len());
+        assert_eq!("Subject from the other side", *posts.get(0).unwrap().subject_immut());
+        //assert_eq!("some subject", posts.get(0).unwrap().get_subject());
+        //assert_eq!("some content", posts.get(0).unwrap().get_content());
+
+
+        //SEARCH BY SUBJECT
+        let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessagesByContentOrSubject {subject: String::from(""), content: String::from("Mary has a little")}).unwrap();
+        let value: MessagesResponse = from_binary(&res).unwrap();
+        let posts : Vec<Post> = value.messages;
+        println!("{:#?}", posts);
+        assert_eq!(1, posts.len());
+        assert_eq!("Mary has a little lamb", *posts.get(0).unwrap().content_immut());
+        //assert_eq!("attachementId", posts.get(0).unwrap().get_attachement());
+       // assert_eq!("1234567890", posts.get(0).unwrap().get_created());
+       // assert_eq!(0, posts.get(0).unwrap().get_thread_id());
+       // assert_eq!("some content", posts.get(0).unwrap().get_content());
+       // assert_eq!(0, posts.get(0).unwrap().get_likes().len());
+
+
+        //assert_eq!("some content", threads.get(0).unwrap().get_related_messages());
+
     }
 
 

@@ -80,12 +80,15 @@ impl Thread {
     pub fn thread_id(&mut self) -> &mut usize {
         &mut self.thread_id
     }
+
     pub fn thread_id_immut(&self) -> &usize {
         &self.thread_id
     }
+
     pub fn created(&mut self) -> &mut String {
         &mut self.created
     }    
+
     pub fn created_immut(&self) -> &String {
         &self.created
     }    
@@ -98,8 +101,8 @@ pub struct Post {
     content: String,
     attachement: String,
     likes: Vec<Addr>,
-pub thread_id: usize,
-pub message_id: usize,
+    thread_id: usize,
+    message_id: usize,
     created: String
 }
 
@@ -118,34 +121,61 @@ impl Post {
         }
     }
 
-    pub fn get_owner(&self) -> &Addr {
+    pub fn owner(&mut self) -> &mut Addr {
+        &mut self.owner
+    }
+    pub fn owner_immut(&self) -> &Addr {
         &self.owner
     }
 
-    pub fn get_content(&self) -> &String {
-        &self.content
+    pub fn content(&mut self) -> &mut String {
+        &mut self.content
     }
+    
+    pub fn content_immut(&self) -> &String {
+        &self.content
+    }   
 
-    pub fn get_subject(&self) -> &String {
+    pub fn subject(&mut self) -> &mut String {
+        &mut self.subject
+    }
+    pub fn subject_immut(&self) -> &String {
         &self.subject
     }
 
-    pub fn get_likes(&self) -> &Vec<Addr> {
+    pub fn likes(&mut self) -> &mut Vec<Addr> {
+        &mut self.likes
+    }
+    pub fn likes_immut(&self) -> &Vec<Addr> {
         &self.likes
     }
-    pub fn get_attachement(&self) -> &String {
+    pub fn attachement(&mut self) -> &mut String {
+        &mut self.attachement
+    }
+    pub fn attachement_immut(&self) -> &String {
         &self.attachement
     }
 
-    pub fn get_created(&self) -> &String {
+    pub fn created(&mut self) -> &mut String {
+        &mut self.created
+    }
+    pub fn created_immut(&self) -> &String {
         &self.created
     }
 
-    pub fn get_thread_id(&self) -> usize {
-        self.thread_id
+    pub fn thread_id(&mut self) -> &mut usize {
+        &mut self.thread_id
     }
-    pub fn get_message_id(&self) -> usize {
-        self.message_id
+
+    pub fn thread_id_immut(&self) -> &usize {
+        &self.thread_id
+    }
+
+    pub fn message_id(&mut self) -> &mut usize {
+        &mut self.message_id
+    }
+    pub fn message_id_immut(&self) -> &usize {
+        &self.message_id
     }
  
     pub fn like_message(&mut self, addr: Addr){

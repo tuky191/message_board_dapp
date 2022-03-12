@@ -28,7 +28,8 @@ pub enum QueryMsg {
     GetProfiles {},
     GetProfileByAddress { addr: Addr },
     GetThreads {},
-    GetMessagesByThreadId {thread_id: usize}
+    GetMessagesByThreadId {thread_id: usize},
+    GetMessagesByContentOrSubject {content: String, subject: String}
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
