@@ -138,10 +138,8 @@ fn get_messages_by_content_or_subject(deps: Deps, content: String, subject: Stri
 
     let state = STATE.load(deps.storage)?;
     let mut found_messages = Vec::new();
-    let pattern_content = format!("{}{}{}", ".*", content, ".*");
-    let pattern_subject = format!("{}{}{}", ".*", subject, ".*");
-    let re_content = Regex::new(&pattern_content).unwrap();
-    let re_subject = Regex::new(&pattern_subject).unwrap();
+    let re_content = Regex::new(&content).unwrap();
+    let re_subject = Regex::new(&subject).unwrap();
         for i in 0..state.messages.len() {
             if re_content.is_match(state.messages[i].content_immut()) && !content.is_empty()  {
                 found_messages.push(state.messages[i].clone());

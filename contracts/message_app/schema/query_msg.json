@@ -65,6 +65,64 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_threads"
+      ],
+      "properties": {
+        "get_threads": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_messages_by_thread_id"
+      ],
+      "properties": {
+        "get_messages_by_thread_id": {
+          "type": "object",
+          "required": [
+            "thread_id"
+          ],
+          "properties": {
+            "thread_id": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_messages_by_content_or_subject"
+      ],
+      "properties": {
+        "get_messages_by_content_or_subject": {
+          "type": "object",
+          "required": [
+            "content",
+            "subject"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   ],
   "definitions": {

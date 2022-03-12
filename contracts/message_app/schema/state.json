@@ -5,7 +5,8 @@
   "required": [
     "messages",
     "owner",
-    "profiles"
+    "profiles",
+    "threads"
   ],
   "properties": {
     "messages": {
@@ -22,6 +23,12 @@
       "items": {
         "$ref": "#/definitions/Profile"
       }
+    },
+    "threads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Thread"
+      }
     }
   },
   "definitions": {
@@ -32,22 +39,23 @@
     "Post": {
       "type": "object",
       "required": [
+        "attachement",
         "content",
         "created",
-        "image",
         "likes",
+        "message_id",
         "owner",
         "subject",
-        "thread_index"
+        "thread_id"
       ],
       "properties": {
+        "attachement": {
+          "type": "string"
+        },
         "content": {
           "type": "string"
         },
         "created": {
-          "type": "string"
-        },
-        "image": {
           "type": "string"
         },
         "likes": {
@@ -56,15 +64,20 @@
             "$ref": "#/definitions/Addr"
           }
         },
+        "message_id": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
         "owner": {
           "$ref": "#/definitions/Addr"
         },
         "subject": {
           "type": "string"
         },
-        "thread_index": {
+        "thread_id": {
           "type": "integer",
-          "format": "uint32",
+          "format": "uint",
           "minimum": 0.0
         }
       }
@@ -72,23 +85,53 @@
     "Profile": {
       "type": "object",
       "required": [
+        "avatar",
+        "bio",
         "created",
-        "nickname",
-        "owner",
-        "profile_picture"
+        "handle",
+        "owner"
+      ],
+      "properties": {
+        "avatar": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Addr"
+        }
+      }
+    },
+    "Thread": {
+      "type": "object",
+      "required": [
+        "created",
+        "related_messages_ids",
+        "thread_id"
       ],
       "properties": {
         "created": {
           "type": "string"
         },
-        "nickname": {
-          "type": "string"
+        "related_messages_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0.0
+          }
         },
-        "owner": {
-          "$ref": "#/definitions/Addr"
-        },
-        "profile_picture": {
-          "type": "string"
+        "thread_id": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
         }
       }
     }

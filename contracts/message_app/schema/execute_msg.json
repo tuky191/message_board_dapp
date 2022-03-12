@@ -11,28 +11,28 @@
         "submit_message": {
           "type": "object",
           "required": [
+            "attachement",
             "content",
             "created",
-            "image",
             "subject",
-            "thread_index"
+            "thread_id"
           ],
           "properties": {
+            "attachement": {
+              "type": "string"
+            },
             "content": {
               "type": "string"
             },
             "created": {
               "type": "string"
             },
-            "image": {
-              "type": "string"
-            },
             "subject": {
               "type": "string"
             },
-            "thread_index": {
+            "thread_id": {
               "type": "integer",
-              "format": "uint32",
+              "format": "uint",
               "minimum": 0.0
             }
           }
@@ -71,18 +71,22 @@
         "update_profile": {
           "type": "object",
           "required": [
+            "avatar",
+            "bio",
             "created",
-            "nickname",
-            "profile_picture"
+            "handle"
           ],
           "properties": {
+            "avatar": {
+              "type": "string"
+            },
+            "bio": {
+              "type": "string"
+            },
             "created": {
               "type": "string"
             },
-            "nickname": {
-              "type": "string"
-            },
-            "profile_picture": {
+            "handle": {
               "type": "string"
             }
           }
