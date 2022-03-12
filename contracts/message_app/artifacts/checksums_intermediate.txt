@@ -1,1 +1,1 @@
-5629839b39d916f113d3af689279c1da2a5c5d31b33ceeb1c33671303d5d54f6  ./target/wasm32-unknown-unknown/release/message_app.wasm
+0fed7c714033a72bd45bc9403479abc41e054962b1705459d5f8ea5308fb82d8  ./target/wasm32-unknown-unknown/release/message_app.wasm

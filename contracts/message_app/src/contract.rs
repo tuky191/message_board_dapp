@@ -8,7 +8,7 @@ use crate::state::{State, STATE};
 use crate::state::Post;
 use crate::state::Profile;
 use crate::state::Thread;
-use regex::Regex;
+//use regex::Regex;
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:message_board";
@@ -138,19 +138,20 @@ fn get_messages_by_content_or_subject(deps: Deps, content: String, subject: Stri
 
     let state = STATE.load(deps.storage)?;
     let mut found_messages = Vec::new();
-    let re_content = Regex::new(&content).unwrap();
-    let re_subject = Regex::new(&subject).unwrap();
+    
+    //let re_content = Regex::new(&content).unwrap();
+    //let re_subject = Regex::new(&subject).unwrap();
         for i in 0..state.messages.len() {
-            if re_content.is_match(state.messages[i].content_immut()) && !content.is_empty()  {
+            if state.messages[i].content_immut().contains(&content) && !content.is_empty()  {
                 found_messages.push(state.messages[i].clone());
             }
-            if re_subject.is_match(state.messages[i].subject_immut()) && !subject.is_empty() {
+            if state.messages[i].subject_immut().contains(&subject) && !subject.is_empty() {
                 found_messages.push(state.messages[i].clone());
             }
     }
+    
     Ok(MessagesResponse { messages: found_messages })
 }
-
 
 fn get_messages(deps: Deps) -> StdResult<MessagesResponse> {
     let state = STATE.load(deps.storage)?;
@@ -392,31 +393,6 @@ mod tests {
         assert_eq!(1, posts.likes_immut().len());
     }
 
-        #[test]
-    fn test_id_vec() {
-        use id_vec::{IdVec, Id};
-        let mut deps = mock_dependencies(&coins(2, "token"));
-        let msg = InstantiateMsg { messages: Vec::new(), profiles: Vec::new() };
-        let info = mock_info("creator", &coins(2, "token"));
-        let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
-        let info = mock_info("anyone", &coins(2, "token"));
-        //let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
-        let content = String::from("some content");
-        let subject = String::from("some subject");
-        let attachement = String::from("attachementId");
-        let created = String::from("1234567890");
-        let thread_id = 0;
-
-        let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created);
-        let mut posts = IdVec::new();
-        let post_id: Id<Post> = posts.insert(new_post);     
-        println!("{:#?} -> {:#?}", post_id, posts.get(post_id));
-        let retrieved_post = posts.get(post_id);
-        println!("{:#?}", post_id);
-        println!("{:#?}", retrieved_post.unwrap());
-    }
-
-    
    #[test]
     fn search_post_by_subject_or_content() {
         //GIVEN
@@ -442,9 +418,6 @@ mod tests {
         println!("{:#?}", posts);
         assert_eq!(1, posts.len());
         assert_eq!("Subject from the other side", *posts.get(0).unwrap().subject_immut());
-        //assert_eq!("some subject", posts.get(0).unwrap().get_subject());
-        //assert_eq!("some content", posts.get(0).unwrap().get_content());
-
 
         //SEARCH BY SUBJECT
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessagesByContentOrSubject {subject: String::from(""), content: String::from("Mary has a little")}).unwrap();
@@ -453,15 +426,6 @@ mod tests {
         println!("{:#?}", posts);
         assert_eq!(1, posts.len());
         assert_eq!("Mary has a little lamb", *posts.get(0).unwrap().content_immut());
-        //assert_eq!("attachementId", posts.get(0).unwrap().get_attachement());
-       // assert_eq!("1234567890", posts.get(0).unwrap().get_created());
-       // assert_eq!(0, posts.get(0).unwrap().get_thread_id());
-       // assert_eq!("some content", posts.get(0).unwrap().get_content());
-       // assert_eq!(0, posts.get(0).unwrap().get_likes().len());
-
-
-        //assert_eq!("some content", threads.get(0).unwrap().get_related_messages());
-
     }
 
 
