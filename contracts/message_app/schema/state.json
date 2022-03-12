@@ -113,12 +113,19 @@
       "type": "object",
       "required": [
         "created",
+        "related_messages",
         "related_messages_ids",
         "thread_id"
       ],
       "properties": {
         "created": {
           "type": "string"
+        },
+        "related_messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Post"
+          }
         },
         "related_messages_ids": {
           "type": "array",

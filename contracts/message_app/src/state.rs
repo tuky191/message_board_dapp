@@ -58,14 +58,16 @@ impl Profile {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Thread {
     related_messages_ids: Vec<usize>,
+    pub related_messages: Vec<Post>,
     thread_id: usize,
     created: String
 }
 
 impl Thread {
-    pub fn new(related_messages_ids: Vec<usize>, thread_id : usize, created: String) -> Thread {
+    pub fn new(related_messages_ids: Vec<usize>, related_messages: Vec<Post>, thread_id : usize, created: String) -> Thread {
         Thread {
             related_messages_ids,
+            related_messages,
             thread_id,
             created
         }
@@ -75,6 +77,12 @@ impl Thread {
     }
     pub fn related_messages_ids_immut(&self) -> &Vec<usize> {
         &self.related_messages_ids
+    }
+    pub fn related_messages(&mut self) -> &mut Vec<Post> {
+        &mut self.related_messages
+    }
+    pub fn related_messages_immut(&self) -> &Vec<Post> {
+        &self.related_messages
     }
 
     pub fn thread_id(&mut self) -> &mut usize {
