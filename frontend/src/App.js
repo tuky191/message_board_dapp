@@ -46,16 +46,34 @@ import { ConnectWallet } from './components/ConnectWallet'
       return Date.parse(date)
     }
 
+    const generateMockProfile = () => {
+      
+      const getRandomElement = (List) => {
+        return List[Math.floor(Math.random() * List.length)]
+      }
+      const handles = ["blissfulavocado", "gloomycheddar", "BionicBeaver", "StoicFranklin", "RustyTheCruty", "Juul"];
+      const avatars = ["https://bootdey.com/img/Content/avatar/avatar1.png", "https://bootdey.com/img/Content/avatar/avatar2.png", "https://bootdey.com/img/Content/avatar/avatar3.png", "https://bootdey.com/img/Content/avatar/avatar4.png", "https://bootdey.com/img/Content/avatar/avatar5.png", "https://bootdey.com/img/Content/avatar/avatar6.png", "https://bootdey.com/img/Content/avatar/avatar7.png"];
+      const bios = ['Too dead to die.', "I’m not always sarcastic. Sometimes, I’m sleeping.", "I prefer my puns intended.", "Just another papercut survivor.", 'Write something about you. What do you like more, cats or dogs? Why dogs?']
+      return {
+        handle: getRandomElement(handles),
+        avatar: getRandomElement(avatars),
+        bio: getRandomElement(bios)
+      }
+    }
+
     const checkIfUserHasProfile = async() => {
       let profile = await query.getProfileByAddress(connectedWallet, connectedWallet.walletAddress);
       if (profile.profiles.length == 0) {
         setNewUserModal(true);
+        setUserProfile(generateMockProfile())
         console.log('User without profile!');
       } else {
         setUserProfile(profile.profiles[0])
         setNewUserModal(false);
       }
     }
+
+
     const submitData = async(data) => {
       if (data.method === 'submitPost') {
         await submitPost(data.subject, data.content)
