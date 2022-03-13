@@ -57,14 +57,14 @@ impl Profile {
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Thread {
-    related_messages_ids: Vec<usize>,
+    related_messages_ids: Vec<u32>,
     pub related_messages: Vec<Post>,
-    thread_id: usize,
+    thread_id: u32,
     created: String
 }
 
 impl Thread {
-    pub fn new(related_messages_ids: Vec<usize>, related_messages: Vec<Post>, thread_id : usize, created: String) -> Thread {
+    pub fn new(related_messages_ids: Vec<u32>, related_messages: Vec<Post>, thread_id : u32, created: String) -> Thread {
         Thread {
             related_messages_ids,
             related_messages,
@@ -72,10 +72,10 @@ impl Thread {
             created
         }
     }
-    pub fn related_messages_ids(&mut self) -> &mut Vec<usize> {
+    pub fn related_messages_ids(&mut self) -> &mut Vec<u32> {
         &mut self.related_messages_ids
     }
-    pub fn related_messages_ids_immut(&self) -> &Vec<usize> {
+    pub fn related_messages_ids_immut(&self) -> &Vec<u32> {
         &self.related_messages_ids
     }
     pub fn related_messages(&mut self) -> &mut Vec<Post> {
@@ -85,11 +85,11 @@ impl Thread {
         &self.related_messages
     }
 
-    pub fn thread_id(&mut self) -> &mut usize {
+    pub fn thread_id(&mut self) -> &mut u32 {
         &mut self.thread_id
     }
 
-    pub fn thread_id_immut(&self) -> &usize {
+    pub fn thread_id_immut(&self) -> &u32 {
         &self.thread_id
     }
 
@@ -109,14 +109,14 @@ pub struct Post {
     content: String,
     attachement: String,
     likes: Vec<Addr>,
-    thread_id: usize,
-    message_id: usize,
+    thread_id: u32,
+    message_id: u32,
     created: String
 }
 
 
 impl Post {
-    pub fn new(owner:Addr, subject : String, content: String, attachement: String, thread_id: usize, message_id: usize, created: String) -> Post {
+    pub fn new(owner:Addr, subject : String, content: String, attachement: String, thread_id: u32, message_id: u32, created: String) -> Post {
         Post {
             owner,
             subject,
@@ -171,18 +171,18 @@ impl Post {
         &self.created
     }
 
-    pub fn thread_id(&mut self) -> &mut usize {
+    pub fn thread_id(&mut self) -> &mut u32 {
         &mut self.thread_id
     }
 
-    pub fn thread_id_immut(&self) -> &usize {
+    pub fn thread_id_immut(&self) -> &u32 {
         &self.thread_id
     }
 
-    pub fn message_id(&mut self) -> &mut usize {
+    pub fn message_id(&mut self) -> &mut u32 {
         &mut self.message_id
     }
-    pub fn message_id_immut(&self) -> &usize {
+    pub fn message_id_immut(&self) -> &u32 {
         &self.message_id
     }
  

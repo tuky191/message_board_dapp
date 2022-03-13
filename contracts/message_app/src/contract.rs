@@ -57,7 +57,7 @@ fn put_and_get_index<T>(v: &mut Vec<T>, item: T) -> usize {
 }
 
 //This should be redesign for hashmap instead vec
-pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachement: String, thread_id: usize, created: String) -> Result<Response, ContractError> {
+pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachement: String, thread_id: u32, created: String) -> Result<Response, ContractError> {
     //First enter new post into messages vec, message_id is 0
     let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created.clone());
     //placeholder index
@@ -65,7 +65,7 @@ pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: St
     let mut index: usize = 0;
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
         index = put_and_get_index(&mut state.messages, new_post.clone());
-        *state.messages[index].message_id() = index;
+        *state.messages[index].message_id() = index as u32;
         Ok(state)
     })?;
 
@@ -73,12 +73,12 @@ pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: St
         match state.threads.iter_mut().find(|ref p| thread_id == *p.thread_id_immut()) {
             Some(thread) => {
                 //Need to refactor with references
-                thread.related_messages_ids().push(index);
+                thread.related_messages_ids().push(index as u32);
                 *thread.thread_id() = thread_id;
             }
             None => {
                 let mut thread = Thread::new(Vec::new(), Vec::new(), thread_id, created);
-                thread.related_messages_ids().push(index);
+                thread.related_messages_ids().push(index as u32);
                 state.threads.push(thread);
             }
         }               
@@ -157,7 +157,7 @@ fn get_messages(deps: Deps) -> StdResult<MessagesResponse> {
     let state = STATE.load(deps.storage)?;
     Ok(MessagesResponse { messages: state.messages })
 }
-fn get_messages_by_thread_id(deps: Deps, thread_id: usize) -> StdResult<ThreadsResponse> {
+fn get_messages_by_thread_id(deps: Deps, thread_id: u32) -> StdResult<ThreadsResponse> {
     let state = STATE.load(deps.storage)?;
     let messages = state.messages
         .iter()
@@ -181,7 +181,7 @@ fn get_threads(deps: Deps) -> StdResult<ThreadsResponse> {
     let mut threads_with_id = Vec::new();
         for i in 0..state.threads.len() {
             let mut thread = state.threads[i].clone();
-            *thread.thread_id() = i; 
+            *thread.thread_id() = i as u32; 
             threads_with_id.push(thread);
         }
 
