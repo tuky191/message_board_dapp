@@ -23,7 +23,8 @@ import { ConnectWallet } from './components/ConnectWallet'
       likes: []
     }])
     const [updating, setUpdating] = useState(true)
-    const [new_user, setNewUserModal] = useState(false)
+    const [showNewUserPopUP, setNewUserModal] = useState(false)
+    const [userProfile, setUserProfile] = useState({})
     const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
     const allPosts = []
@@ -51,7 +52,7 @@ import { ConnectWallet } from './components/ConnectWallet'
         setNewUserModal(true);
         console.log('User without profile!');
       } else {
-        console.log(profile.profiles[0])
+        setUserProfile(profile.profiles[0])
         setNewUserModal(false);
       }
     }
@@ -59,16 +60,14 @@ import { ConnectWallet } from './components/ConnectWallet'
       if (data.method === 'submitPost') {
         await submitPost(data.subject, data.content)
       } else if ((data.method === 'submitProfile')) {
-        await submitProfile(data.nickname, data.profile_picture)
+        await submitProfile()
       }
     }
-    const submitProfile = async (nickname, profile_picture) => {
+    const submitProfile = async () => {
       setUpdating(true);
-      let message = {};
-      let date = new Date();
-      message.nickname = nickname;
-      message.profile_picture = profile_picture;
-      message.created = convert_epoch(date).toString();
+      console.log(userProfile)
+      let message = userProfile; 
+      message.created = convert_epoch(new Date()).toString();
       await execute.updateProfile(connectedWallet, message);
       await checkIfUserHasProfile();
       await refreshPosts();
@@ -84,9 +83,9 @@ import { ConnectWallet } from './components/ConnectWallet'
             user_profiles[messages[i].owner] = await query.getProfileByAddress(connectedWallet, messages[i].owner);
           }          
           allPosts.push({
-            profileImage: user_profiles[messages[i].owner].profiles[0].profile_picture,
+            profileImage: user_profiles[messages[i].owner].profiles[0].avatar,
             owner: messages[i].owner,
-            alias: user_profiles[messages[i].owner].profiles[0].nickname,
+            alias: user_profiles[messages[i].owner].profiles[0].handle,
             subject: messages[i].subject,
             content: messages[i].content,
             created: messages[i].created,
@@ -130,7 +129,7 @@ import { ConnectWallet } from './components/ConnectWallet'
         <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
           <div>
-            <DiscussionBoard posts={posts} onSubmit={submitData} new_user={new_user} />
+            <DiscussionBoard posts={posts} onSubmit={submitData} showNewUserPopUP={showNewUserPopUP} userProfile={userProfile} setUserProfile={setUserProfile}/>
           </div>
         )}
       </div>

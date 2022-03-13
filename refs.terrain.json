@@ -15,9 +15,9 @@
       }
     },
     "message_app": {
-      "codeId": "21",
+      "codeId": "22",
       "contractAddresses": {
-        "default": "terra1vl8ujeusn9clww0agcmq3pq2v0d4ta607xx4ux"
+        "default": "terra1myee9usysamhfv5nffjs6vvv3zfn2kuyj33c54"
       }
     }
   }

@@ -7,29 +7,23 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Post from './Post'
 import PostEditor from './PostEditor'
 import ProfileEditor from './ProfileEditor'
-import Button from 'react-bootstrap/Button';
 import { Modal } from 'antd';
-import { DisconnectWallet } from './DisconnectWallet';
-import styles from './index.module.css'
 import "./DiscussionBoard.css";
 
-const DiscussionBoard = ({ onSubmit, posts, new_user }) => {
+const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUserProfile }) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
-    const [profile_picture, setProfilePicture] = useState('https://bootdey.com/img/Content/avatar/avatar1.png')
-    const [nickname, setNickname] = useState('Michal')
+ 
+   
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(new_user);
+    const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(showNewUserPopUP);
     
-    //console.log(new_user)
-    //console.log(isSettingsModalVisible)
-    const [isModalLoading, setIsModalLoading] = useState(true);
     const perPage = 100
     const [pageCount, setPageCount] = useState(0)
     const [pagePosts, setPagePosts] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     useEffect(() => {
-        setIsSettingsModalVisible(new_user)
+        setIsSettingsModalVisible(showNewUserPopUP)
         
         setPageCount(Math.ceil(posts.length / perPage))
 
@@ -115,10 +109,8 @@ const DiscussionBoard = ({ onSubmit, posts, new_user }) => {
         setIsModalVisible(false)
     }
     const submitSettings = () => {
-        onSubmit({ nickname: nickname,
-            profile_picture: profile_picture,
-            method: 'submitProfile'
-        })
+        userProfile['method'] = 'submitProfile'
+        onSubmit(userProfile)
         setIsSettingsModalVisible(false)
     }
 
@@ -287,7 +279,6 @@ const DiscussionBoard = ({ onSubmit, posts, new_user }) => {
                     <div>
                         <Modal
                             visible={isModalVisible}
-                            confirmLoading={isModalLoading}
                             onCancel={() => {
                                 setIsModalVisible(false);
                             }}
@@ -325,7 +316,7 @@ const DiscussionBoard = ({ onSubmit, posts, new_user }) => {
                                 </div>
                             ]}>
                             <div>
-                                <ProfileEditor nickname={nickname} setNickname={setNickname} profile_picture={profile_picture} setProfilePicture={setProfilePicture} />
+                                <ProfileEditor userProfile={userProfile} setUserProfile={setUserProfile}  />
                             </div>
                         </Modal>
                     </div>

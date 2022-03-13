@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactQuill, { Quill } from 'react-quill';
-import EmbedBlot from 'quill';
 import ImageResize from "quill-image-resize-module--fix-imports-error";
 import { ImageDrop } from 'quill-image-drop-module';
 import 'react-quill/dist/quill.snow.css'
@@ -49,6 +48,13 @@ const toolbarContainer = [
 
     ['clean']
 ]
+
+const formatsContainer = [
+    'header',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image'
+]
 const uploadFile = IPFS();
 
 
@@ -56,14 +62,32 @@ class MyCustomQuill extends React.Component {
     constructor(props) {
         super(props)
         console.log(props)
-        this.state = { text: this.props.text || ' ', setText: this.props.setText} // You can also pass a Quill Delta here
+        this.state = { text: this.props.text || ' ', setText: this.props.setText } // You can also pass a Quill Delta here
+
+        this.toolbar = this.props.toolbar || toolbarContainer
+        this.formats = this.props.formats || formatsContainer
+      
+      /*
+        this.placeholder = this.props.text || ""
+        this.text = this.props.text || " "
+        this.setText = this.props.setText
+    */
+        this.modules = {
+            toolbar: {
+                container: this.toolbar,
+                    handlers: { image: this.imageHandler }
+            },
+            //   imageDrop: true,
+            imageResize: { parchment: Quill.import('parchment') }
+        }
         this.handleChange = this.handleChange.bind(this)
     }
 
     handleChange(value) {
+        
+        //this.setText(this.text)
         this.setState({ text: value })
         this.state.setText(this.state.text)
-        console.log(this.state)
     }
 
     imageHandler = (image, callback) => {
@@ -83,21 +107,8 @@ class MyCustomQuill extends React.Component {
             this.quillEditor.insertEmbed(range.index, 'image', value, "user")
         }
     }
-    modules = {
-        toolbar: {
-            container: toolbarContainer,
-            handlers: {image: this.imageHandler}
-        },
-     //   imageDrop: true,
-        imageResize: { parchment: Quill.import('parchment')}
-    }
+   
 
-    formats = [
-        'header',
-        'bold', 'italic', 'underline', 'strike', 'blockquote',
-        'list', 'bullet', 'indent',
-        'link', 'image'
-    ]
 
     render() {
         return (
@@ -108,6 +119,7 @@ class MyCustomQuill extends React.Component {
                 modules={this.modules}
                 formats={this.formats}
                 onChange={this.handleChange}
+                placeholder={this.text}
                 />
         )
     }

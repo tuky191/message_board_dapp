@@ -59,8 +59,9 @@ export const createMessage = async (wallet, message) =>
 export const updateProfile = async (wallet, message) =>
   _exec({
     update_profile: {
-      nickname: message.nickname,
-      profile_picture: message.profile_picture,
+      handle: message.handle,
+      avatar: message.avatar,
+      bio: message.bio,
       created: message.created
     }
   })(wallet);
