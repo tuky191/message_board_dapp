@@ -3,7 +3,7 @@ import cn from "classnames";
 import { ReactComponent as Hand } from "./hand.svg";
 import "./styles.scss";
 import { useConnectedWallet, useWallet } from "@terra-money/wallet-provider";
-import * as execute from '../contract/execute'
+import * as execute from '../../contract/execute'
 
 const particleList = Array.from(Array(10));
 

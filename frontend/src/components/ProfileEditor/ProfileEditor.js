@@ -1,19 +1,16 @@
 import React from 'react'
-import { useState } from 'react'
-import ReactQuill from 'react-quill'
 import './editor.css'
 import 'react-quill/dist/quill.snow.css'
 import { Form, Input, Button, Image } from 'antd';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "./DiscussionBoard.css";
-import { IPFS } from "./IPFS";
-import MyCustomQuill from './MyCustomQuill';
+//import "./DiscussionBoard.css";
+import { IPFS } from "../IPFS";
+import MyCustomQuill from '../MyCustomQuill';
 
 
 const ProfileEditor = ({ userProfile, setUserProfile}) => {
-
 
     const changeAvatar = (value) => {
         setUserProfile((prevState => ({

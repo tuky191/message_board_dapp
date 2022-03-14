@@ -6,7 +6,7 @@ import {
   useConnectedWallet,
   WalletStatus,
 } from '@terra-money/wallet-provider'
-import DiscussionBoard from './components/DiscussionBoard'
+import DiscussionBoard from './components/DiscussionBoard/DiscussionBoard'
 import * as execute from './contract/execute'
 import * as query from './contract/query'
 import { ConnectWallet } from './components/ConnectWallet'
@@ -18,7 +18,7 @@ import { ConnectWallet } from './components/ConnectWallet'
       subject: '',
       content: '',
       date: '',
-      image: '',
+      attachment: '',
       created: '',
       likes: []
     }])
@@ -107,7 +107,7 @@ import { ConnectWallet } from './components/ConnectWallet'
             subject: messages[i].subject,
             content: messages[i].content,
             created: messages[i].created,
-            image: messages[i].image,
+            attachment: messages[i].attachment,
             likes: messages[i].likes,
           })
         }
@@ -127,7 +127,7 @@ import { ConnectWallet } from './components/ConnectWallet'
         message.subject = subject;
         message.content = content;
         message.created = convert_epoch(date).toString();
-        message.image = '';
+        message.attachment = '';
         message.thread_index = 0;
         console.log(message);
         await execute.createMessage(connectedWallet, message);

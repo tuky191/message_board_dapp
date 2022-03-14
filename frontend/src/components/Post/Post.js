@@ -6,7 +6,7 @@ import Avatar from 'react-avatar'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import styles from './post.module.css'
-import LikeButton from './LikeButton'
+import LikeButton from '../LikeButton/LikeButton'
 
 const Post = ({ profileImage, owner, time, subject, content, image, alias, likes, index }) => {
     const clean = DOMPurify.sanitize(content)
