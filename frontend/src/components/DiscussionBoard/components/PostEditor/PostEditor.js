@@ -10,17 +10,28 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
 import FileUpload from "../FileUpload/FileUpload"
 
-const PostEditor = ({ text, setText, subject, setSubject }) => {
-    const handleChange = (newValue) => {
-        setText(newValue)
-    }
+const PostEditor = ({ setForumMessage }) => {
 
-    const handleChangeSubject = e => {
-        setSubject(e.target.value)
+
+    const changeSubject = e => {
+        setForumMessage((prevState => ({
+            ...prevState,
+            subject: e.target.value
+        })))
     };
 
+    const changeContent = (value) => {
+        setForumMessage((prevState => ({
+            ...prevState,
+            content: value
+        })))
+    }
+
     const changeAttachement = (value) => {
-        console.log(value)
+        setForumMessage((prevState => ({
+            ...prevState,
+            attachement: prevState + ',' + value
+        })))
     }
 
     return <div>
@@ -28,11 +39,11 @@ const PostEditor = ({ text, setText, subject, setSubject }) => {
             <div className="modal-body">
                 <div className="form-group">
                     <label>Title:</label>
-                    <Form.Item> <Input onChange={handleChangeSubject} /></Form.Item>
+                    <Form.Item> <Input onChange={changeSubject} /></Form.Item>
                 </div>
                 <div className="form-group">
                     <label>Message:</label>
-                        <Form.Item><MyCustomQuill value={text || ''} setText={setText}></MyCustomQuill></Form.Item>
+                    <Form.Item><MyCustomQuill setText={changeContent}></MyCustomQuill></Form.Item>
                 </div>
                 <div className="form-group">
                     <Form.Item><FileUpload changeAttachement={changeAttachement}/></Form.Item>

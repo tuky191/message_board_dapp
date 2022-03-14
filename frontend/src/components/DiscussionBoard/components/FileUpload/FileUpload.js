@@ -14,8 +14,7 @@ const FileUpload = ({ changeAttachement}) => {
     const uploadAttachement = ({
             file,
             onSuccess,
-            onError,
-            onProgress,
+            onError
         }) => {
         let send_request = async () => {
             const res = await uploadFile(file)
@@ -36,9 +35,8 @@ const FileUpload = ({ changeAttachement}) => {
         },
         customRequest: uploadAttachement,
         onChange(info) {
-            const { status, url } = info.file;
+            const { status } = info.file;
             if (status !== 'uploading') {
-                console.log(info.file, info.fileList);
             }
             if (status === 'done') {
                 changeAttachement(info.file.response.url)
@@ -62,7 +60,7 @@ const FileUpload = ({ changeAttachement}) => {
             </p>
             <p className="ant-upload-text">Click or drag file to this area to upload</p>
             <p className="ant-upload-hint">
-                Do not upload any sensitive data.
+                Do not upload any sensitive data as they will live forever in the cloud.
             </p>
         </Dragger>
     )

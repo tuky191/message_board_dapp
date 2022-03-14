@@ -25,6 +25,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
     const [updating, setUpdating] = useState(true)
     const [showNewUserPopUP, setNewUserModal] = useState(false)
     const [userProfile, setUserProfile] = useState({})
+    const [forumMessage, setForumMessage] = useState({})
     const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
     const allPosts = []
@@ -81,15 +82,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         await submitProfile()
       }
     }
-    const submitProfile = async () => {
-      setUpdating(true);
-      console.log(userProfile)
-      let message = userProfile; 
-      message.created = convert_epoch(new Date()).toString();
-      await execute.updateProfile(connectedWallet, message);
-      await checkIfUserHasProfile();
-      await refreshPosts();
-    }
+
     const refreshPosts = async () => {
       let { messages } = await query.getMessages(connectedWallet);
       setMessages(messages);
@@ -118,18 +111,24 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         //throw e;
       }
     }
-    
-    const submitPost = async (subject, content) => {
+
+    const submitProfile = async () => {
+      setUpdating(true);
+      let message = userProfile;
+      message.created = convert_epoch(new Date()).toString();
+      await execute.updateProfile(connectedWallet, message);
+      await checkIfUserHasProfile();
+      await refreshPosts();
+    }
+
+
+    const submitPost = async (message) => {
       setUpdating(true);
       try {
-        let message = {};
-        let date = new Date();
-        message.subject = subject;
-        message.content = content;
-        message.attachement = 'placeholder_link_to_file'
-        message.created = convert_epoch(date).toString();
-        message.attachment = '';
-        message.thread_index = 0;
+        let message = forumMessage;
+        message.created = convert_epoch(new Date()).toString();
+        message.attachement = message.attachement || ''
+        message.thread_id = 0;
         console.log(message);
         await execute.createMessage(connectedWallet, message);
         await refreshPosts();
@@ -148,7 +147,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
           <div>
-            <DiscussionBoard posts={posts} onSubmit={submitData} showNewUserPopUP={showNewUserPopUP} userProfile={userProfile} setUserProfile={setUserProfile}/>
+            <DiscussionBoard posts={posts} onSubmit={submitData} showNewUserPopUP={showNewUserPopUP} userProfile={userProfile} setUserProfile={setUserProfile} setForumMessage={setForumMessage} />
           </div>
         )}
       </div>

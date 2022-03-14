@@ -10,7 +10,7 @@ import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 
-const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUserProfile }) => {
+const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUserProfile, setForumMessage }) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
  
@@ -294,7 +294,7 @@ const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUs
                                 </div>
                             ]}>
                             <div>
-                                <PostEditor text={text} setText={setText} subject={subject} setSubject={setSubject} />
+                                <PostEditor setForumMessage={setForumMessage} />
                             </div>
                         </Modal>                        
                     </div>
