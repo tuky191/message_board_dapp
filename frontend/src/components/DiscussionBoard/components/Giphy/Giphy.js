@@ -6,7 +6,7 @@ import {
     Gif,
     Grid
 } from "@giphy/react-components";
-import Config from '../../config/Config'
+import Config from '../../../../config/Config'
 const Giphy = () => {
 
     const giphyFetch = new GiphyFetch(Config.configuration.giphy_api_key);

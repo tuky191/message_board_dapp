@@ -1,13 +1,10 @@
 import React from 'react'
-import './editor.css'
-import 'react-quill/dist/quill.snow.css'
-import { Form, Input, Button, Image } from 'antd';
-import 'antd/dist/antd.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-//import "./DiscussionBoard.css";
+import { Form, Input, Image } from 'antd';
 import { IPFS } from "../IPFS/IPFS";
 import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
+import 'antd/dist/antd.css';
+import './editor.css'
+import 'react-quill/dist/quill.snow.css'
 
 
 const ProfileEditor = ({ userProfile, setUserProfile}) => {

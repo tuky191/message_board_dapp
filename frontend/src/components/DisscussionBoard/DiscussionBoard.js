@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import ReactPaginate from 'react-paginate'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import Post from './components/Post/Post'
-import PostEditor from './components/PostEditor/PostEditor'
-import ProfileEditor from './components/ProfileEditor/ProfileEditor'
+import Post from '../DiscussionBoard/components/Post/Post'
+import PostEditor from '../DiscussionBoard/components/PostEditor/PostEditor'
+import ProfileEditor from '../DiscussionBoard/components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 
