@@ -6,8 +6,8 @@ import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 //import "./DiscussionBoard.css";
-import { IPFS } from "../IPFS";
-import MyCustomQuill from '../MyCustomQuill';
+import { IPFS } from "../IPFS/IPFS";
+import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
 
 
 const ProfileEditor = ({ userProfile, setUserProfile}) => {

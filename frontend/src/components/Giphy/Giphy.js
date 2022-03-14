@@ -6,10 +6,10 @@ import {
     Gif,
     Grid
 } from "@giphy/react-components";
-
+import Config from '../../config/Config'
 const Giphy = () => {
 
-    const giphyFetch = new GiphyFetch("uKkkU2hZY1vxUKzXbEE17z64bJ2kXSUb");
+    const giphyFetch = new GiphyFetch(Config.configuration.giphy_api_key);
 
     const GridDemo = ({ onGifClick }) => {
         const fetchGifs = (offset) =>

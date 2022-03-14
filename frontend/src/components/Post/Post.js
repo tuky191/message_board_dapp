@@ -2,11 +2,10 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import DOMPurify from 'dompurify'
 import ReactHtmlParser from 'react-html-parser'
-import Avatar from 'react-avatar'
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-import styles from './post.module.css'
 import LikeButton from '../LikeButton/LikeButton'
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import styles from './post.module.css'
 
 const Post = ({ profileImage, owner, time, subject, content, image, alias, likes, index }) => {
     const clean = DOMPurify.sanitize(content)

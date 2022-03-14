@@ -9,7 +9,7 @@ import {
 import DiscussionBoard from './components/DiscussionBoard/DiscussionBoard'
 import * as execute from './contract/execute'
 import * as query from './contract/query'
-import { ConnectWallet } from './components/ConnectWallet'
+import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
 
 
   const App = () => {

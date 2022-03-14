@@ -3,7 +3,7 @@ import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from "quill-image-resize-module--fix-imports-error";
 import { ImageDrop } from 'quill-image-drop-module';
 import 'react-quill/dist/quill.snow.css'
-import { IPFS } from "./IPFS";
+import { IPFS } from "../IPFS/IPFS";
 
 let BlockEmbed = Quill.import('blots/block/embed');
 class ImageBlot extends BlockEmbed {

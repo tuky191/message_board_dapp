@@ -9,7 +9,7 @@ import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 //import "./DiscussionBoard.css";
-import MyCustomQuill from '../MyCustomQuill';
+import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
 
 const PostEditor = ({ text, setText, subject, setSubject }) => {
     const handleChange = (newValue) => {
