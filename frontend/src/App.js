@@ -126,6 +126,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         let date = new Date();
         message.subject = subject;
         message.content = content;
+        message.attachement = 'placeholder_link_to_file'
         message.created = convert_epoch(date).toString();
         message.attachment = '';
         message.thread_index = 0;
