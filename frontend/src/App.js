@@ -22,6 +22,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
       created: '',
       likes: []
     }])
+    const [showThreads, setshowThreads] = useState(true)
     const [updating, setUpdating] = useState(true)
     const [showNewUserPopUP, setNewUserModal] = useState(false)
     const [userProfile, setUserProfile] = useState({})
@@ -29,7 +30,10 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
     const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
     const allPosts = []
+    const allThreads = []
     const [posts, setPosts] = useState([])
+    const [threads, setThreads] = useState([])
+
     
     useEffect(() => {
       (async () => {
@@ -42,6 +46,8 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         setUpdating(false);
       })();
     }, [connectedWallet]);
+
+
 
     const convert_epoch = (date) =>{
       return Date.parse(date)
@@ -83,33 +89,54 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
       }
     }
 
+ 
+    
     const refreshPosts = async () => {
-      let { messages } = await query.getMessages(connectedWallet);
-      setMessages(messages);
+      let threads = [];
       var user_profiles = {}
-      try {
-        for (let i = 0; i < messages.length; i++) {
-          if (!(messages[i].owner in user_profiles)) {
-            console.log(messages[i].owner)
-            user_profiles[messages[i].owner] = await query.getProfileByAddress(connectedWallet, messages[i].owner);
-          }          
-          allPosts.push({
-            profileImage: user_profiles[messages[i].owner].profiles[0].avatar,
-            owner: messages[i].owner,
-            alias: user_profiles[messages[i].owner].profiles[0].handle,
-            subject: messages[i].subject,
-            content: messages[i].content,
-            created: messages[i].created,
-            attachment: messages[i].attachment,
-            likes: messages[i].likes,
-          })
+      if (showThreads) {
+          threads = (await query.getThreads(connectedWallet)).threads;
+          for (let i = 0; i < threads.length; i++) {
+            let thread_id = threads[i]['thread_id']
+            let current_thread =  (await query.getMessagesByThreadId(connectedWallet, thread_id)).threads[0];
+            let messages = current_thread['related_messages']
+            let currentPosts = [];
+            for (let j = 0; j < messages.length; j++) {
+              if (!(messages[j].owner in user_profiles)) {
+                user_profiles[messages[j].owner] = (await query.getProfileByAddress(connectedWallet, messages[j].owner)).profiles[0];
+              }
+              let post = {
+                profileImage: user_profiles[messages[j].owner].avatar,
+                owner: messages[j].owner,
+                alias: user_profiles[messages[j].owner].handle,
+                subject: messages[j].subject,
+                content: messages[j].content,
+                created: messages[j].created,
+                attachment: messages[j].attachment,
+                likes: messages[j].likes,
+                message_id: messages[j]['message_id'],
+                thread_id: thread_id,
+                title_post: j === 0 ? true : false
+              }
+              allPosts.push(post)
+              currentPosts.push(post)
+            } 
+            allThreads.push({
+              thread_id: thread_id,
+              created: current_thread.created,
+              title: currentPosts[0].subject,
+              body: currentPosts[0].content,
+              owner: currentPosts[0].owner,
+              related_messages: currentPosts       
+            })
+
+          }
         }
-        setPosts([...allPosts]);
-      }
-      catch (e) {
-        setUpdating(false);
-        //throw e;
-      }
+      console.log(allPosts)
+      console.log(allThreads)
+      setPosts([...allPosts]);
+
+      setThreads([...allThreads]);
     }
 
     const submitProfile = async () => {
@@ -148,7 +175,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
           <div>
-            <DiscussionBoard posts={posts} onSubmit={submitData} showNewUserPopUP={showNewUserPopUP} userProfile={userProfile} setUserProfile={setUserProfile} setForumMessage={setForumMessage} />
+            <DiscussionBoard posts={posts} threads={threads} onSubmit={submitData} showNewUserPopUP={showNewUserPopUP} userProfile={userProfile} setUserProfile={setUserProfile} setForumMessage={setForumMessage} />
           </div>
         )}
       </div>

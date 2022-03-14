@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Accordion } from 'react'
 
 import PropTypes from 'prop-types'
 import ReactPaginate from 'react-paginate'
@@ -10,7 +10,7 @@ import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 
-const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUserProfile, setForumMessage }) => {
+const DiscussionBoard = ({ onSubmit, posts, threads,showNewUserPopUP, userProfile, setUserProfile, setForumMessage }) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
  
@@ -20,33 +20,33 @@ const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUs
     
     const perPage = 100
     const [pageCount, setPageCount] = useState(0)
-    const [pagePosts, setPagePosts] = useState([])
+    const [pageThreads, setPageThreads] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     useEffect(() => {
         setIsSettingsModalVisible(showNewUserPopUP)
         
-        setPageCount(Math.ceil(posts.length / perPage))
+        setPageCount(Math.ceil(threads.length / perPage))
 
-        if (posts.length % perPage !== 0 && posts.length > perPage) {
-            setPagePosts(
-                posts.slice(
-                    posts.length - (posts.length % perPage) - 1,
-                    posts.length - 1
+        if (threads.length % perPage !== 0 && threads.length > perPage) {
+            setPageThreads(
+                threads.slice(
+                    threads.length - (threads.length % perPage) - 1,
+                    threads.length - 1
                 )
             )
             setCurrentPage(pageCount - 1)
-        } else if (posts.length % perPage === 0 && posts.length > perPage) {
-            setPagePosts(posts.slice(posts.length - perPage, posts.length))
+        } else if (threads.length % perPage === 0 && threads.length > perPage) {
+            setPageThreads(threads.slice(threads.length - perPage, threads.length))
             setCurrentPage(pageCount)
         } else {
-            setPagePosts(posts.slice(0, perPage))
+            setPageThreads(threads.slice(0, perPage))
             setCurrentPage(0)
         }
 
         return () => {
-            setPagePosts([])
+            setPageThreads([])
         }
-    }, [posts])
+    }, [threads])
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -117,7 +117,7 @@ const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUs
 
     const onPageChange = ({ selected }) => {
         let offset = Math.ceil(selected * perPage)
-        setPagePosts(posts.slice(offset, offset + perPage))
+        setPageThreads(threads.slice(offset, offset + perPage))
         setCurrentPage(selected)
     }
 
@@ -185,19 +185,37 @@ const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUs
                                     <input type="text" className="form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4" placeholder="Search forum" />
                                 </span>
                             </div>
-
-
-                            <div className="inner-main-body p-2 p-sm-3 collapse forum-content show">
-                                
-                                {pagePosts.map((post, idx) => {
-                                    const newTime = timeSince(post.created);
+                            <div>
+                                {pageThreads.map((thread, idx) => {
+                                    const newTime = timeSince(thread.created);
+                                    const thread_id = thread.thread_id 
+                                    console.log(newTime)
                                     return (
                                         <React.Fragment key={idx}>
-                                            <Post {...post} time={newTime} index={idx} />
-                                            <hr className={`mt-0`} />
-                                        </React.Fragment>
+                                            <div id={"myGroup" + thread_id} class="container">
+                                                <div class="panel">
+                                                    <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
+                                                        <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id}/>
+                                                    </div>
+                                                <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
+                                                        <a href="#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
+                                                        {thread.related_messages.map((post, index) => {
+                                                            const timePost = timeSince(post.created);
+                                                            return (
+                                                                <div>
+                                                                    <Post {...post} time={timePost} thread_id={thread_id} />
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </div>
+                                                <hr className={`mt-0`} />
+                                            </div>
+                                        </React.Fragment>   
                                     );
                                 })}
+
+                          
                                 
                                 <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
                                     <ReactPaginate
@@ -221,58 +239,6 @@ const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUs
 
                             </div>
 
-                            <div className="inner-main-body p-2 p-sm-3 collapse forum-content">
-                                <a href="#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target=".forum-content"><i className="fa fa-arrow-left mr-2"></i>Back</a>
-                                <div className="card mb-2">
-                                    <div className="card-body">
-                                        <div className="media forum-item">
-                                            <a href="" className="card-link">
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle" width="50" alt="User" />
-                                                <small className="d-block text-center text-muted">Newbie</small>
-                                            </a>
-                                            <div className="media-body ml-3">
-                                                <a href="" className="text-secondary">Mokrani</a>
-                                                <small className="text-muted ml-2">1 hour ago</small>
-                                                <h5 className="mt-1">Realtime fetching data</h5>
-                                                <div className="mt-3 font-size-sm">
-                                                    <p>Hellooo :)</p>
-                                                    <p>
-                                                        I'm newbie with laravel and i want to fetch data from database in realtime for my dashboard anaytics and i found a solution with ajax but it dosen't work if any one have a simple solution it will be
-                                                        helpful
-                                                    </p>
-                                                    <p>Thank</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-muted small text-center">
-                                                <span className="d-none d-sm-inline-block"><i className="far fa-eye"></i> 19</span>
-                                                <span><i className="far fa-comment ml-2"></i> 3</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div className="card mb-2">
-                                    <div className="card-body">
-                                        <div className="media forum-item">
-                                            <a href="" className="card-link">
-                                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" className="rounded-circle" width="50" alt="User" />
-                                                <small className="d-block text-center text-muted">Pro</small>
-                                            </a>
-                                            <div className="media-body ml-3">
-                                                <a href="" className="text-secondary">drewdan</a>
-                                                <small className="text-muted ml-2">1 hour ago</small>
-                                                <div className="mt-3 font-size-sm">
-                                                    <p>What exactly doesn't work with your ajax calls?</p>
-                                                    <p>Also, WebSockets are a great solution for realtime data on a dashboard. Laravel offers this out of the box using broadcasting</p>
-                                                </div>
-                                                <button className="btn btn-xs text-muted has-icon"><i className="fa fa-heart" aria-hidden="true"></i>1</button>
-                                                <a href="" className="text-muted small">Reply</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                         </div>
                     </div>
@@ -330,11 +296,13 @@ const DiscussionBoard = ({ onSubmit, posts, showNewUserPopUP, userProfile, setUs
 }
 
 DiscussionBoard.defaultProps = {
-    posts: []
+    posts: [],
+    threads: []
 }
 
 DiscussionBoard.propTypes = {
     posts: PropTypes.array,
+    threads: PropTypes.array,
     onSubmit: PropTypes.func
 }
 

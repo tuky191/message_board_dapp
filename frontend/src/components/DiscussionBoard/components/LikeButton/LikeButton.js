@@ -21,6 +21,7 @@ const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount }) => {
         await execute.likeMessage(connectedWallet, index)
         setPostLikesCount(liked ? PostlikesCount - 1 : PostlikesCount + 1)
         setLiked(!liked)
+        console.log(index);
         setClicked(true)
     }
 

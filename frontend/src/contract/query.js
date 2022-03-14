@@ -20,6 +20,16 @@ export const getMessages = async (wallet) => {
   return lcd.wasm.contractQuery(contractAdress(wallet), { get_messages: {} })
 }
 
+
+export const getMessagesByThreadId = async (wallet, thread_id) => {
+  const lcd = new LCDClient({
+    URL: wallet.network.lcd,
+    chainID: wallet.network.chainID,
+  })
+  //console.log(wallet)
+  return lcd.wasm.contractQuery(contractAdress(wallet), { get_messages_by_thread_id: { thread_id: thread_id} })
+}
+
 export const getThreads = async (wallet) => {
   const lcd = new LCDClient({
     URL: wallet.network.lcd,
