@@ -45,16 +45,18 @@ const _exec =
 
 // ==== execute contract ====
 
-export const createMessage = async (wallet, message) =>
-  _exec({
+export const createMessage = async (wallet, message) => {
+  return _exec({
     submit_message: {
       subject: message.subject,
       content: message.content,
       created: message.created,
       attachement: message.attachement,
-      thread_id: message.thread_id,    
+      thread_id: message.thread_id,
     }
   })(wallet);
+}
+
 
 export const updateProfile = async (wallet, message) =>
   _exec({

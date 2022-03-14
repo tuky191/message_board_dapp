@@ -130,7 +130,8 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         message.attachement = message.attachement || ''
         message.thread_id = 0;
         console.log(message);
-        await execute.createMessage(connectedWallet, message);
+        let result = await execute.createMessage(connectedWallet, message);
+        console.log(result);
         await refreshPosts();
       }
       catch (e) {

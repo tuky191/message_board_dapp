@@ -57,19 +57,25 @@ fn put_and_get_index<T>(v: &mut Vec<T>, item: T) -> usize {
 }
 
 //This should be redesign for hashmap instead vec
-pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachement: String, thread_id: u32, created: String) -> Result<Response, ContractError> {
+pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachement: String, thread_id_opt: Option<u32>, created: String) -> Result<Response, ContractError> {
     //First enter new post into messages vec, message_id is 0
-    let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created.clone());
-    //placeholder index
-
-    let mut index: usize = 0;
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
-        index = put_and_get_index(&mut state.messages, new_post.clone());
+        let thread_id: u32;
+
+        if thread_id_opt.is_some() {
+             thread_id = thread_id_opt.unwrap();
+        } else {
+            let new_thread = Thread::new(Vec::new(), Vec::new(), 0, created.clone());
+            let index = put_and_get_index(&mut state.threads, new_thread.clone());
+            *state.threads[index].thread_id() = index as u32;
+            thread_id = index as u32;            
+        } 
+       
+        let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created.clone());
+
+        let index = put_and_get_index(&mut state.messages, new_post.clone());
         *state.messages[index].message_id() = index as u32;
-        Ok(state)
-    })?;
 
-    STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
         match state.threads.iter_mut().find(|ref p| thread_id == *p.thread_id_immut()) {
             Some(thread) => {
                 //Need to refactor with references
@@ -159,6 +165,7 @@ fn get_messages(deps: Deps) -> StdResult<MessagesResponse> {
 }
 fn get_messages_by_thread_id(deps: Deps, thread_id: u32) -> StdResult<ThreadsResponse> {
     let state = STATE.load(deps.storage)?;
+    let mut response = Vec::new();
     let messages = state.messages
         .iter()
         .filter(|&message| thread_id.eq(*&message.thread_id_immut()))
@@ -169,10 +176,11 @@ fn get_messages_by_thread_id(deps: Deps, thread_id: u32) -> StdResult<ThreadsRes
         for i in 0..threads.len() {
             if *threads[i].thread_id_immut() == thread_id {
                 threads[i].related_messages = messages.clone();
+                response.push(threads[i].clone());
             }
     }       
 
-    Ok(ThreadsResponse { threads: threads })
+    Ok(ThreadsResponse { threads: response })
 }
 
 fn get_threads(deps: Deps) -> StdResult<ThreadsResponse> {
@@ -244,13 +252,13 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
 
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
-//      println!("{:#?}", msg);
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: None};
+        println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: None};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessages {}).unwrap();
@@ -271,7 +279,7 @@ mod tests {
         let value: ThreadsResponse = from_binary(&res).unwrap();
         let threads : Vec<Thread> = value.threads;
         println!("{:#?}", threads);
-        assert_eq!(1, threads.len());
+        assert_eq!(2, threads.len());
         assert_eq!(0, *threads.get(0).unwrap().thread_id_immut());
         //assert_eq!("some content", threads.get(0).unwrap().get_related_messages());
 
@@ -285,11 +293,11 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetThreads {}).unwrap();
@@ -379,7 +387,7 @@ mod tests {
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
 
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
@@ -403,12 +411,12 @@ mod tests {
 
         //MESSAGE #1
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("One Thing is certain, we cannot go that way."), subject : String::from("Subject from the other side"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("One Thing is certain, we cannot go that way."), subject : String::from("Subject from the other side"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         //MESSAGE #2
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("Mary has a little lamb"), subject : String::from("Is this all there is for me"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: 0};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("Mary has a little lamb"), subject : String::from("Is this all there is for me"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         //SEARCH BY SUBJECT

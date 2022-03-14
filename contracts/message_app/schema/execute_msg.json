@@ -14,8 +14,7 @@
             "attachement",
             "content",
             "created",
-            "subject",
-            "thread_id"
+            "subject"
           ],
           "properties": {
             "attachement": {
@@ -31,8 +30,11 @@
               "type": "string"
             },
             "thread_id": {
-              "type": "integer",
-              "format": "uint",
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint32",
               "minimum": 0.0
             }
           }

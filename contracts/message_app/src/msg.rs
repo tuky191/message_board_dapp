@@ -14,7 +14,7 @@ pub struct InstantiateMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    SubmitMessage {content : String, subject: String, attachement: String, thread_id:u32, created: String},
+    SubmitMessage {content : String, subject: String, attachement: String, thread_id: Option<u32>, created: String},
     LikeMessage {index: u32},
     UpdateProfile {handle: String, avatar: String, bio: String,created: String},
 }
