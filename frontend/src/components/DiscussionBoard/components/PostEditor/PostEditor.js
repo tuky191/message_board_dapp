@@ -8,8 +8,7 @@ import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
-import { IPFS } from "../IPFS/IPFS";
-//import FileUpload from "./FileUpload"
+import FileUpload from "../FileUpload/FileUpload"
 
 const PostEditor = ({ text, setText, subject, setSubject }) => {
     const handleChange = (newValue) => {
@@ -21,24 +20,9 @@ const PostEditor = ({ text, setText, subject, setSubject }) => {
     };
 
     const changeAttachement = (value) => {
-
+        console.log(value)
     }
-    const uploadFile = IPFS();
 
-    const uploadAttachement = () => {
-        const input = document.createElement('input')
-        input.setAttribute('type', 'file')
-        input.setAttribute('accept', '*')
-        input.click()
-        input.onchange = async () => {
-            const file = input.files[0]
-            const res = await uploadFile(file)
-            let url = 'https://ipfs.io/ipfs/' + res
-            changeAttachement(url)
-        }
-
-    }    
-    
     return <div>
         <Form>
             <div className="modal-body">
@@ -50,9 +34,9 @@ const PostEditor = ({ text, setText, subject, setSubject }) => {
                     <label>Message:</label>
                         <Form.Item><MyCustomQuill value={text || ''} setText={setText}></MyCustomQuill></Form.Item>
                 </div>
-                <div className={"custom-file form-control-sm mt-3"} style={{maxWidth: "300px"}}>
-                   
-                </div>  
+                <div className="form-group">
+                    <Form.Item><FileUpload changeAttachement={changeAttachement}/></Form.Item>
+                </div> 
             </div>
         </Form>
            </div>
