@@ -1,0 +1,1 @@
+5f619249ce65fc842bd5c1e911e9fe18c4b1c5c6d3083da17e6a2edc258bfaa4  ./target/wasm32-unknown-unknown/release/terra_forum.wasm
