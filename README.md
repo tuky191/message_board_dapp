@@ -1,2 +1,2 @@
-# message_board_dapp
-my simple message board app, using terra network as backend
+# terra-forum
+First iteration of messaging forum based on terra blockchain
