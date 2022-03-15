@@ -1,5 +1,6 @@
 import React from 'react'
 import './Profile.css'
+import ReactHtmlParser from 'react-html-parser'
 
 const Profile = ({ profile }) => {
     return (
@@ -12,8 +13,7 @@ const Profile = ({ profile }) => {
                                 </div>
                             <div className="details">
                                 <h4>{profile.handle}</h4>
-                                <div>{profile.bio}</div>
-                                    <div className="mg-top-10">32 Followers | 120 Following | 18 Posts</div>                             
+                                <div>{ReactHtmlParser(profile.bio)}</div>
                                 </div>
                             </div>
                 </div>
