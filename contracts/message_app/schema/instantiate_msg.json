@@ -3,13 +3,20 @@
   "title": "InstantiateMsg",
   "type": "object",
   "required": [
-    "messages"
+    "messages",
+    "profiles"
   ],
   "properties": {
     "messages": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/Post"
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Profile"
       }
     }
   },
@@ -21,13 +28,23 @@
     "Post": {
       "type": "object",
       "required": [
+        "attachement",
         "content",
+        "created",
         "likes",
+        "message_id",
         "owner",
-        "subject"
+        "subject",
+        "thread_id"
       ],
       "properties": {
+        "attachement": {
+          "type": "string"
+        },
         "content": {
+          "type": "string"
+        },
+        "created": {
           "type": "string"
         },
         "likes": {
@@ -36,11 +53,48 @@
             "$ref": "#/definitions/Addr"
           }
         },
+        "message_id": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        },
         "owner": {
           "$ref": "#/definitions/Addr"
         },
         "subject": {
           "type": "string"
+        },
+        "thread_id": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "required": [
+        "avatar",
+        "bio",
+        "created",
+        "handle",
+        "owner"
+      ],
+      "properties": {
+        "avatar": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/definitions/Addr"
         }
       }
     }

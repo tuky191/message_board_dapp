@@ -33,6 +33,96 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_profiles"
+      ],
+      "properties": {
+        "get_profiles": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_profile_by_address"
+      ],
+      "properties": {
+        "get_profile_by_address": {
+          "type": "object",
+          "required": [
+            "addr"
+          ],
+          "properties": {
+            "addr": {
+              "$ref": "#/definitions/Addr"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_threads"
+      ],
+      "properties": {
+        "get_threads": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_messages_by_thread_id"
+      ],
+      "properties": {
+        "get_messages_by_thread_id": {
+          "type": "object",
+          "required": [
+            "thread_id"
+          ],
+          "properties": {
+            "thread_id": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_messages_by_content_or_subject"
+      ],
+      "properties": {
+        "get_messages_by_content_or_subject": {
+          "type": "object",
+          "required": [
+            "content",
+            "subject"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   ],
   "definitions": {

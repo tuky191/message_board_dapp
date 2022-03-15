@@ -11,15 +11,31 @@
         "submit_message": {
           "type": "object",
           "required": [
+            "attachement",
             "content",
+            "created",
             "subject"
           ],
           "properties": {
+            "attachement": {
+              "type": "string"
+            },
             "content": {
+              "type": "string"
+            },
+            "created": {
               "type": "string"
             },
             "subject": {
               "type": "string"
+            },
+            "thread_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint32",
+              "minimum": 0.0
             }
           }
         }
@@ -42,6 +58,38 @@
               "type": "integer",
               "format": "uint32",
               "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "update_profile"
+      ],
+      "properties": {
+        "update_profile": {
+          "type": "object",
+          "required": [
+            "avatar",
+            "bio",
+            "created",
+            "handle"
+          ],
+          "properties": {
+            "avatar": {
+              "type": "string"
+            },
+            "bio": {
+              "type": "string"
+            },
+            "created": {
+              "type": "string"
+            },
+            "handle": {
+              "type": "string"
             }
           }
         }

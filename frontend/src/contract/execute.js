@@ -8,7 +8,7 @@ const until = Date.now() + 1000 * 60 * 60;
 const untilInterval = Date.now() + 1000 * 60;
 
 const _exec =
-  (msg, fee = new Fee(200000, { uluna: 10000 })) =>
+  (msg, fee = new Fee(2000000, { uluna: 22660 })) =>
   async (wallet) => {
     const lcd = new LCDClient({
       URL: wallet.network.lcd,
@@ -45,15 +45,30 @@ const _exec =
 
 // ==== execute contract ====
 
-export const increment = _exec({ increment: {} });
-
-export const reset = async (wallet, count) =>
-  _exec({ reset: { count } })(wallet);
-
-export const createMessage = async (wallet, message) =>
-  _exec({
+export const createMessage = async (wallet, message) => {
+  return _exec({
     submit_message: {
       subject: message.subject,
-      content: message.content    
+      content: message.content,
+      created: message.created,
+      attachement: message.attachement,
+      thread_id: message.thread_id,
     }
+  })(wallet);
+}
+
+
+export const updateProfile = async (wallet, message) =>
+  _exec({
+    update_profile: {
+      handle: message.handle,
+      avatar: message.avatar,
+      bio: message.bio,
+      created: message.created
+    }
+  })(wallet);
+
+export const likeMessage = async (wallet, index) =>
+  _exec({
+    like_message: { index }
   })(wallet);
