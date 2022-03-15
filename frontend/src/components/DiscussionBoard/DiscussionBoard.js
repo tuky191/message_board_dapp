@@ -8,7 +8,9 @@ import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 import Paginator from "./components/Paginator/Paginator"
-import DisconnectWallet from "../TerraWallet/DisconnectWallet"
+//import DisconnectWallet from "../TerraWallet/DisconnectWallet"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, setForumMessage, refreshPosts, userProfiles}) => {
     const [text, setText] = useState('')
@@ -41,7 +43,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
     };
 
     const generateItems = () => {
-        {
+        
         return threads.map((thread, idx) => {
             const newTime = timeSince(thread.created);
             const thread_id = thread.thread_id
@@ -52,7 +54,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id} refreshPosts={refreshPosts} showLike={false} />
                             </div>
                             <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
-                                <a href="#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
+                                <a href="/#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
                                 {thread.related_messages.map((post, index) => {
                                     const timePost = timeSince(post.created);
                                     return (
@@ -71,12 +73,13 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                     </div>
                 </React.Fragment>
             );
-        })}
+        })
     }
 
     useEffect(() => {
         setIsSettingsModalVisible(showNewUserPopUP)
         setItems(generateItems())
+           // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads])
 
 
@@ -168,7 +171,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                                                 
                                                                 <div>
                                                                     <div>
-                                                                        <a onClick={() => showModalProfile(userProfile)}> <li className="clearfix">
+                                                                        <a href="/#" onClick={() => showModalProfile(userProfile)}> <li className="clearfix">
                                                                             <img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" />
                                                                             <div className="about">
                                                                                 <div className="name">{userProfile.handle}</div>
@@ -189,7 +192,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                         </div>
                         <div className="inner-main">
                             <div className="inner-main-header">
-                                <a onClick={() => showModalSettings()} ><img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" /></a>
+                                <a href="/#" onClick={() => showModalSettings()} ><img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" /></a>
                                 <span>{userProfile.handle}</span>
                                 <span className="input-icon input-icon-sm ml-auto w-auto">
                                     <input type="text" className="form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4" placeholder="Search forum" />

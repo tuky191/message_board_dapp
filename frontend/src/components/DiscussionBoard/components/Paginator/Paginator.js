@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import ReactPaginate from 'react-paginate';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -58,7 +57,6 @@ function Paginator ({ itemsPerPage, items }) {
                         previousLabel='Previous'
                         nextLabel='Next'
                         breakClassName='page-item'
-                        onPageChange={handlePageClick}
                         containerClassName='pagination'
                         pageClassName='page-item'
                         pageLinkClassName='page-link'

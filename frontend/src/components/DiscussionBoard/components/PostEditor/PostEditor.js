@@ -1,9 +1,7 @@
 import React from 'react'
-
-import ReactQuill from 'react-quill'
 import './editor.css'
 import 'react-quill/dist/quill.snow.css'
-import { Form, Input, Modal } from 'antd';
+import { Form, Input} from 'antd';
 import 'antd/dist/antd.css';
 import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
 import FileUpload from "../FileUpload/FileUpload"

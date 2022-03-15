@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import cn from "classnames";
 import { ReactComponent as Hand } from "./hand.svg";
 import "./styles.scss";
-import { useConnectedWallet, useWallet } from "@terra-money/wallet-provider";
+import { useConnectedWallet } from "@terra-money/wallet-provider";
 import * as execute from '../../../../contract/execute'
 
 const particleList = Array.from(Array(10));
@@ -10,7 +10,6 @@ const particleList = Array.from(Array(10));
 
 const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount, refreshPosts }) => {
     const [clicked, setClicked] = useState(false);
-    const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
     const initiateLikes = () => {
         //check if user has already liked the post

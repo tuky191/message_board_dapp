@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from "quill-image-resize-module--fix-imports-error";
-import { ImageDrop } from 'quill-image-drop-module';
+//import { ImageDrop } from 'quill-image-drop-module';
 import 'react-quill/dist/quill.snow.css'
 import { IPFS } from "../IPFS/IPFS";
 
