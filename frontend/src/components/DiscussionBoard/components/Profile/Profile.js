@@ -7,7 +7,7 @@ const Profile = ({ profile }) => {
         <div>
             <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"></link>
                 <div className="container bootdey">
-                            <div className="well well-light-orange mini-profile-widget">
+                    <div className="well .well-light-blue mini-profile-widget">
                                 <div className="image-container">
                                 <img src={profile.avatar} className="avatar img-responsive" alt="avatar"></img>
                                 </div>

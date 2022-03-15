@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import PropTypes from 'prop-types'
 import Post from './components/Post/Post'
+import ThreadTitle from './components/ThreadTitle/ThreadTitle'
 import Profile from './components/Profile/Profile'
 import PostEditor from './components/PostEditor/PostEditor'
 import ProfileEditor from './components/ProfileEditor/ProfileEditor'
@@ -51,7 +52,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                 <React.Fragment key={idx}>
                     <div id={"myGroup" + thread_id} className="container" >
                         <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
-                                <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id} refreshPosts={refreshPosts} showLike={false} />
+                            <ThreadTitle {...thread.related_messages[0]} time={newTime} thread_id={thread_id}  />
                             </div>
                             <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
                                 <a href="/#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
@@ -175,7 +176,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                                                             <img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" />
                                                                             <div className="about">
                                                                                 <div className="name">{userProfile.handle}</div>
-                                                                                <div className="status"> <i className="fa fa-circle offline"></i> left 7 mins ago </div>
+                                                                                <div className="status"> <i className="fa fa-circle online"></i> online </div>
                                                                             </div>
                                                                         </li></a>
                                                                     </div>
@@ -254,7 +255,11 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                             }}
                             className='modal-dialog modal-lg'
                             title='Profile'
-                            >
+                            footer={[
+                                <div>
+                                </div>
+                            ]}>
+                            
                             <div>
                                 <Profile profile={currentVisibleProfile}/>
                             </div>
