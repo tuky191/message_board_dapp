@@ -8,11 +8,12 @@ import * as execute from '../../../../contract/execute'
 const particleList = Array.from(Array(10));
 
 
-const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount }) => {
+const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount, refreshPosts }) => {
     const [clicked, setClicked] = useState(false);
     const { status } = useWallet()
     const connectedWallet = useConnectedWallet()
     const initiateLikes = () => {
+        //check if user has already liked the post
         return (likes?.find(like => like === connectedWallet.walletAddress ? true : false))
     }
     const [liked, setLiked] = useState(initiateLikes);
@@ -23,6 +24,7 @@ const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount }) => {
         setLiked(!liked)
         console.log(index);
         setClicked(true)
+        refreshPosts()
     }
 
     return (

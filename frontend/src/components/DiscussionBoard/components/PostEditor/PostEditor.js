@@ -30,7 +30,7 @@ const PostEditor = ({ setForumMessage }) => {
     const changeAttachement = (value) => {
         setForumMessage((prevState => ({
             ...prevState,
-            attachement: prevState + ',' + value
+            attachement: prevState.attachement + ',' + value
         })))
     }
 

@@ -5,7 +5,7 @@ import ReactHtmlParser from 'react-html-parser'
 import LikeButton from '../LikeButton/LikeButton'
 import styles from './post.module.css'
 
-const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id}) => {
+const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id, refreshPosts}) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
@@ -14,15 +14,23 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
     useEffect(() => {
         (async () => {
             setPostLikesCount(PostlikesCount)
+            console.log(PostlikesCount)
+            //refreshPosts()
         })();
     }, []);
-    
+
+    /*
+    useEffect(() => {
+        refreshPosts()
+        console.log(PostlikesCount);
+    }, [PostlikesCount])
+   */
     return (
         <>
             <div className="card mb-2">
                 <div className="card-body p-2 p-sm-3">
                     <div className="media forum-item">
-                        <a href="#" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={".forum-content" + thread_id}><img src={profileImage} className="mr-3 rounded-circle" width="50" alt="User" /></a>
+                        <div><img src={profileImage} className="mr-3 rounded-circle" width="50" alt="User" /></div>
                         <div className="media-body">
                             <a href="#" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={".forum-content" + thread_id} className="text-body"><div className={styles.subject}>{ReactHtmlParser(clean_subject)}</div></a>
                             <span className="text-secondary">
@@ -31,9 +39,8 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
                                     </div>
                             </span>
                                 <p className="text-muted"><a href="" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
-                            <span className="text-muted"><span className="text-secondary font-weight-bold">
-                                    <span className=""><LikeButton index={message_id} likes={likes} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} /></span>
-
+                                <span className="text-muted"><span className="text-secondary font-weight-bold">
+                                <span className=""><LikeButton index={message_id} likes={likes} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} refreshPosts={refreshPosts}/></span>
                             </span></span>
                         </div>
                         <div className="text-muted small text-center align-self-center">

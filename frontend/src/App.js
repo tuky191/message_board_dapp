@@ -22,16 +22,18 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
       created: '',
       likes: []
     }])
+    const connectedWallet = useConnectedWallet()
+
+
     const [showThreads, setshowThreads] = useState(true)
     const [updating, setUpdating] = useState(true)
     const [showNewUserPopUP, setNewUserModal] = useState(false)
     const [userProfile, setUserProfile] = useState({})
+    const [userProfiles, setUserProfiles] = useState([])
+
     const [forumMessage, setForumMessage] = useState({})
     const { status } = useWallet()
-    const connectedWallet = useConnectedWallet()
-    const allPosts = []
     const allThreads = []
-    const [posts, setPosts] = useState([])
     const [threads, setThreads] = useState([])
 
     
@@ -40,13 +42,12 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         setUpdating(true);
         if (connectedWallet) {
           checkIfUserHasProfile();
+          setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
           await refreshPosts();
         }
-        setPosts([...allPosts]);
         setUpdating(false);
       })();
     }, [connectedWallet]);
-
 
 
     const convert_epoch = (date) =>{
@@ -73,7 +74,6 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
       if (profile.profiles.length == 0) {
         setNewUserModal(true);
         setUserProfile(generateMockProfile())
-        console.log('User without profile!');
       } else {
         setUserProfile(profile.profiles[0])
         setNewUserModal(false);
@@ -95,6 +95,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
       let threads = [];
       var user_profiles = {}
       if (showThreads) {
+          setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
           threads = (await query.getThreads(connectedWallet)).threads;
           for (let i = 0; i < threads.length; i++) {
             let thread_id = threads[i]['thread_id']
@@ -118,7 +119,6 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
                 thread_id: thread_id,
                 title_post: j === 0 ? true : false
               }
-              allPosts.push(post)
               currentPosts.push(post)
             } 
             allThreads.push({
@@ -132,10 +132,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
 
           }
         }
-      console.log(allPosts)
-      console.log(allThreads)
-      setPosts([...allPosts]);
-
+      console.log(allThreads);
       setThreads([...allThreads]);
     }
 
@@ -155,10 +152,8 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         let message = forumMessage;
         message.created = convert_epoch(new Date()).toString();
         message.attachement = message.attachement || ''
-        message.thread_id = 0;
         console.log(message);
         let result = await execute.createMessage(connectedWallet, message);
-        console.log(result);
         await refreshPosts();
       }
       catch (e) {
@@ -168,14 +163,21 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
       setUpdating(false);
     }
 
-
     return (
       
       <div className='App'>
         <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
           <div>
-            <DiscussionBoard posts={posts} threads={threads} onSubmit={submitData} showNewUserPopUP={showNewUserPopUP} userProfile={userProfile} setUserProfile={setUserProfile} setForumMessage={setForumMessage} />
+            <DiscussionBoard threads={threads} 
+                             onSubmit={submitData} 
+                             showNewUserPopUP={showNewUserPopUP} 
+                             userProfile={userProfile} 
+                             setUserProfile={setUserProfile} 
+                             setForumMessage={setForumMessage} 
+                             refreshPosts={refreshPosts} 
+                             userProfiles={userProfiles} 
+            />
           </div>
         )}
       </div>
