@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
 import PropTypes from 'prop-types'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Post from './components/Post/Post'
 import Profile from './components/Profile/Profile'
 import PostEditor from './components/PostEditor/PostEditor'
@@ -10,7 +8,7 @@ import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 import Paginator from "./components/Paginator/Paginator"
-
+import DisconnectWallet from "../TerraWallet/DisconnectWallet"
 
 const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, setForumMessage, refreshPosts, userProfiles}) => {
     const [text, setText] = useState('')

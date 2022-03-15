@@ -1,9 +1,7 @@
 import React from 'react'
-import DOMPurify from 'dompurify'
 import './Profile.css'
 
 const Profile = ({ profile }) => {
-    //console.log(userProfile)
     return (
         <div>
             <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"></link>

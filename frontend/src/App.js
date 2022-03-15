@@ -88,8 +88,6 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
         await submitProfile()
       }
     }
-
- 
     
     const refreshPosts = async () => {
       let threads = [];
