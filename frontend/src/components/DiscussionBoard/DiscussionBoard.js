@@ -1,49 +1,27 @@
-import React, { useState, useEffect, Accordion } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import PropTypes from 'prop-types'
-import ReactPaginate from 'react-paginate'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Post from './components/Post/Post'
+import Profile from './components/Profile/Profile'
 import PostEditor from './components/PostEditor/PostEditor'
 import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
+import Paginator from "./components/Paginator/Paginator"
+
 
 const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, setForumMessage, refreshPosts, userProfiles}) => {
     const [text, setText] = useState('')
     const [subject, setSubject] = useState('')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(showNewUserPopUP);
-    const perPage = 5
-    const [pageCount, setPageCount] = useState(0)
+    const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+    const [currentVisibleProfile, setCurrentVisibleProfile] = useState({});
+    const [items, setItems] = useState([])
     const [pageThreads, setPageThreads] = useState([])
-    const [currentPage, setCurrentPage] = useState(0)
-    useEffect(() => {
-        setIsSettingsModalVisible(showNewUserPopUP)
-        
-        setPageCount(Math.ceil(threads.length / perPage))
-        if (threads.length % perPage !== 0 && threads.length > perPage) {
-            setPageThreads(
-                threads.slice(
-                    threads.length - (threads.length % perPage) - 1,
-                    threads.length - 1
-                )
-            )
-            setCurrentPage(pageCount - 1)
-        } else if (threads.length % perPage === 0 && threads.length > perPage) {
-            setPageThreads(threads.slice(threads.length - perPage, threads.length))
-            setCurrentPage(pageCount)
-        } else {
-            setPageThreads(threads.slice(0, perPage))
-            setCurrentPage(0)
-        }
-
-        return () => {
-            setPageThreads([])
-        }
-    }, [threads])
-
+    const perPage = 4
 
     const activateMessageDialog = (value) => {
         setForumMessage((prevState => ({
@@ -57,10 +35,57 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
         setIsModalVisible(true);
     };
 
-    
     const showModalSettings = () => {
         setIsSettingsModalVisible(true);
     };
+
+    const showModalProfile = (userProfile) => {
+        setCurrentVisibleProfile(userProfile);
+        setIsProfileModalVisible(true);
+    };
+
+    const generateItems = () => {
+        {
+        return threads.map((thread, idx) => {
+            const newTime = timeSince(thread.created);
+            const thread_id = thread.thread_id
+            return (
+                <React.Fragment key={idx}>
+                    <div id={"myGroup" + thread_id} className="container">
+                        <div className="panel">
+                            <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
+                                <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id} refreshPosts={refreshPosts} showLike={false} />
+                            </div>
+                            <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
+                                <a href="#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
+                                {thread.related_messages.map((post, index) => {
+                                    const timePost = timeSince(post.created);
+                                    return (
+                                        <div>
+                                            <Post {...post} time={timePost} thread_id={thread_id} refreshPosts={refreshPosts} showLike={true} />
+                                        </div>
+                                    )
+                                })}
+                                <button className="btn btn-primary has-icon btn-block" type="button" data-toggle="modal" data-target="#threadModal" onClick={() => activateMessageDialog(thread_id)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-plus mr-2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </React.Fragment>
+            );
+        })}
+    }
+
+    useEffect(() => {
+        setIsSettingsModalVisible(showNewUserPopUP)
+        setItems(generateItems())
+    }, [threads])
+
 
     const timeSince = (date) => {
         if (typeof date !== 'object') {
@@ -121,11 +146,6 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
     }
 
 
-    const onPageChange = ({ selected }) => {
-        let offset = Math.ceil(selected * perPage)
-        setPageThreads(threads.slice(offset, offset + perPage))
-        setCurrentPage(selected)
-    }
 
     return (
     <><div>
@@ -144,22 +164,25 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 </button>
                             </div>
                             <div className="inner-sidebar-body p-0">
-                                <div class="row clearfix">
-                                    <div class="col-lg-12">
-                                        <div class="card chat-app">
-                                            <div id="plist" class="people-list">
-                                                <ul class="list-unstyled chat-list mt-2 mb-0">
+                                <div className="row clearfix">
+                                    <div className="col-lg-12">
+                                        <div className="card chat-app">
+                                            <div id="plist" className="people-list">
+                                                <ul className="list-unstyled chat-list mt-2 mb-0">
                                                     {
                                                         userProfiles.map((userProfile, index) => {
                                                             return (
+                                                                
                                                                 <div>
-                                                                    <li class="clearfix">
-                                                                        <a><img src={userProfile.avatar} className="mr-3 rounded-circle" alt="avatar"></img></a>
-                                                                        <div class="about">
-                                                                            <div class="name">{userProfile.handle}</div>
-                                                                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
-                                                                        </div>
-                                                                    </li>
+                                                                    <div>
+                                                                        <a onClick={() => showModalProfile(userProfile)}> <li className="clearfix">
+                                                                            <img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" />
+                                                                            <div className="about">
+                                                                                <div className="name">{userProfile.handle}</div>
+                                                                                <div className="status"> <i className="fa fa-circle offline"></i> left 7 mins ago </div>
+                                                                            </div>
+                                                                        </li></a>
+                                                                    </div>
                                                                 </div>                                                                
                                                             )
                                                         })
@@ -170,12 +193,8 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                     </div>
                                 </div>
                             </div>
-                            
-
                         </div>
-
                         <div className="inner-main">
-
                             <div className="inner-main-header">
                                 <a onClick={() => showModalSettings()} ><img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" /></a>
                                 <span>{userProfile.handle}</span>
@@ -184,68 +203,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 </span>
                             </div>
 
-
-                            <div>
-                                {pageThreads.map((thread, idx) => {
-                                    const newTime = timeSince(thread.created);
-                                    const thread_id = thread.thread_id 
-                                    console.log(newTime)
-                                    return (
-                                        <React.Fragment key={idx}>
-                                            <div id={"myGroup" + thread_id} className="container">
-                                                <div className="panel">
-                                                    <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
-                                                        <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id} refreshPosts={refreshPosts}/>
-                                                    </div>
-                                                     <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
-                                                        <a href="#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
-                                                        {thread.related_messages.map((post, index) => {
-                                                            const timePost = timeSince(post.created);
-                                                            return (
-                                                                <div>
-                                                                    <Post {...post} time={timePost} thread_id={thread_id} refreshPosts={refreshPosts}/>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                        <button className="btn btn-primary has-icon btn-block" type="button" data-toggle="modal" data-target="#threadModal" onClick={() => activateMessageDialog(thread_id)}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-plus mr-2">
-                                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                        </React.Fragment>   
-                                    );
-                                })}
-
-                          
-                                
-                                <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
-                                    <ReactPaginate
-                                        pageCount={pageCount}
-                                        pageRangeDisplayed={5}
-                                        marginPagesDisplayed={5}
-                                        previousLabel='Previous'
-                                        nextLabel='Next'
-                                        breakLabel='...'
-                                        breakClassName='page-item'
-                                        onPageChange={onPageChange}
-                                        forcePage={currentPage}
-                                        containerClassName='pagination'
-                                        pageClassName='page-item'
-                                        pageLinkClassName='page-link'
-                                        previousClassName='page-item'
-                                        nextClassName='page-item'
-                                        previousLinkClassName='page-link'
-                                        nextLinkClassName='page-link' />
-                                </div>
-
-                            </div>
-
-
+                            <Paginator itemsPerPage={4} items={items} />
                         </div>
                     </div>
                     <div>
@@ -291,6 +249,22 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 <ProfileEditor userProfile={userProfile} setUserProfile={setUserProfile}  />
                             </div>
                         </Modal>
+                    </div>
+                    <div>
+                        <Modal
+                            visible={isProfileModalVisible}
+                            onCancel={() => {
+                                setIsProfileModalVisible(false);
+                            }}
+                            className='modal-dialog modal-lg'
+                            title='Profile'
+                            >
+                            <div>
+                                <Profile profile={currentVisibleProfile}/>
+                            </div>
+                        </Modal>
+
+
                     </div>
 
                 </div>

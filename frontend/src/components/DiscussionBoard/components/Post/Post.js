@@ -5,12 +5,24 @@ import ReactHtmlParser from 'react-html-parser'
 import LikeButton from '../LikeButton/LikeButton'
 import styles from './post.module.css'
 
-const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id, refreshPosts}) => {
+const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
 
-    
+    const showLikeButton = () => {
+        console.log(showLike)
+        if (showLike) {
+            return (
+                <div>
+                    <span className=""><LikeButton index={message_id} likes={likes} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} refreshPosts={refreshPosts} /></span>
+                </div>
+
+            )
+        }
+
+    }
+
     useEffect(() => {
         (async () => {
             setPostLikesCount(PostlikesCount)
@@ -40,7 +52,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
                             </span>
                                 <p className="text-muted"><a href="" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                                 <span className="text-muted"><span className="text-secondary font-weight-bold">
-                                <span className=""><LikeButton index={message_id} likes={likes} setPostLikesCount={setPostLikesCount} PostlikesCount={PostlikesCount} refreshPosts={refreshPosts}/></span>
+                                {showLikeButton()}
                             </span></span>
                         </div>
                         <div className="text-muted small text-center align-self-center">

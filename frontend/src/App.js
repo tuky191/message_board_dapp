@@ -165,7 +165,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
 
     return (
       
-      <div className='App'>
+      <div className='App bg-image'>
         <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
           <div>

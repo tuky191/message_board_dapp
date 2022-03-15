@@ -1,31 +1,25 @@
 import React from 'react'
-import { useState} from 'react'
+import DOMPurify from 'dompurify'
+import './Profile.css'
 
-
-const Profile = ({ userProfile }) => {
-    const clean_bio = DOMPurify.sanitize(userProfile.bio)
+const Profile = ({ profile }) => {
+    //console.log(userProfile)
     return (
-        <>
+        <div>
             <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"></link>
-                <div class="container bootdey">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="well well-light-orange mini-profile-widget">
-                                <div class="image-container">
-                                <img src={userProfile.avatar} class="avatar img-responsive" alt="avatar"></img>
+                <div className="container bootdey">
+                            <div className="well well-light-orange mini-profile-widget">
+                                <div className="image-container">
+                                <img src={profile.avatar} className="avatar img-responsive" alt="avatar"></img>
                                 </div>
-                                <div class="details">
-                                <h4>{userProfile.handle}</h4>
-                                    <hr>
-                                        <div>{clean_bio}</div>
-                                        <div class="mg-top-10">32 Followers | 120 Following | 18 Posts</div>                             
-                                    </hr>
+                            <div className="details">
+                                <h4>{profile.handle}</h4>
+                                <div>{profile.bio}</div>
+                                    <div className="mg-top-10">32 Followers | 120 Following | 18 Posts</div>                             
                                 </div>
                             </div>
-                        </div>
-                    </div>
                 </div>
-            </>
+            </div>
     )
 }
 
