@@ -20,8 +20,6 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
     const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
     const [currentVisibleProfile, setCurrentVisibleProfile] = useState({});
     const [items, setItems] = useState([])
-    const [pageThreads, setPageThreads] = useState([])
-    const perPage = 4
 
     const activateMessageDialog = (value) => {
         setForumMessage((prevState => ({
@@ -51,9 +49,8 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
             const thread_id = thread.thread_id
             return (
                 <React.Fragment key={idx}>
-                    <div id={"myGroup" + thread_id} className="container">
-                        <div className="panel">
-                            <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
+                    <div id={"myGroup" + thread_id} className="container" >
+                        <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
                                 <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id} refreshPosts={refreshPosts} showLike={false} />
                             </div>
                             <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
@@ -73,8 +70,6 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                     </svg>
                                 </button>
                             </div>
-                        </div>
-
                     </div>
                 </React.Fragment>
             );
@@ -263,10 +258,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 <Profile profile={currentVisibleProfile}/>
                             </div>
                         </Modal>
-
-
                     </div>
-
                 </div>
             </div>
                 </div>

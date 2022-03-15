@@ -11,7 +11,6 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
 
     const showLikeButton = () => {
-        console.log(showLike)
         if (showLike) {
             return (
                 <div>
@@ -29,7 +28,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
             console.log(PostlikesCount)
             //refreshPosts()
         })();
-    }, []);
+    }, [likes]);
 
     /*
     useEffect(() => {
