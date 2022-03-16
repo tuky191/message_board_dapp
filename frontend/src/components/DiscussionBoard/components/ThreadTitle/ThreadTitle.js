@@ -13,7 +13,7 @@ const ThreadTitle = ({ profileImage, owner, time, subject, alias, thread_id }) =
                     <div className="media forum-item">
                         <div><img src={profileImage} className="mr-3 rounded-circle" width="50" alt="User" /></div>
                         <div className="media-body">
-                            <a href="\#" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={".forum-content" + thread_id} className="text-body"><div className={styles.subject}>{ReactHtmlParser(clean_subject)}</div></a>
+                            <a href="\#" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={".forum-content" + thread_id} className="text-body"><div className={"text-white "+styles.subject}>{ReactHtmlParser(clean_subject)}</div></a>
                             <p className="text-muted"><a href="\#" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                         </div>
                     </div>

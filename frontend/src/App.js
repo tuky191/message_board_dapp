@@ -13,6 +13,8 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+
+
   const App = () => {
 
     const connectedWallet = useConnectedWallet()
@@ -26,14 +28,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
     const { status } = useWallet()
     const allThreads = []
     const [threads, setThreads] = useState([])
-
-    
+        
     useEffect(() => {
       (async () => {
         setUpdating(true);
         if (connectedWallet) {
           checkIfUserHasProfile();
-          setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
+          try {
+            setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
+          } catch {
+            setUserProfiles([])
+          }
           await refreshPosts();
         }
         setUpdating(false);
@@ -64,7 +69,15 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
     }
 
     const checkIfUserHasProfile = async() => {
-      let profile = await query.getProfileByAddress(connectedWallet, connectedWallet.walletAddress);
+      let profile = {};
+      try {
+        profile = await query.getProfileByAddress(connectedWallet, connectedWallet.walletAddress);
+      } catch {
+        profile.profiles = [];
+        console.log(profile)
+      }
+      
+     // console.log(profile);
       if (profile.profiles.length === 0) {
         setNewUserModal(true);
         setUserProfile(generateMockProfile())
@@ -86,7 +99,14 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
     const refreshPosts = async () => {
       let threads = [];
       var user_profiles = {}
-      setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
+
+      try {
+        setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
+
+      }catch {
+        setUserProfiles([])
+      }
+      
       threads = (await query.getThreads(connectedWallet)).threads;
       for (let i = 0; i < threads.length; i++) {
         let thread_id = threads[i]['thread_id']
@@ -154,11 +174,9 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
     }
 
     return (
-      
-      <div className='App bg-image'>
+      <div>
         <ConnectWallet />
         {status === WalletStatus.WALLET_CONNECTED && (
-          <div>
             <DiscussionBoard threads={threads} 
                              onSubmit={submitData} 
                              showNewUserPopUP={showNewUserPopUP} 
@@ -168,7 +186,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
                              refreshPosts={refreshPosts} 
                              userProfiles={userProfiles} 
             />
-          </div>
         )}
       </div>
     )

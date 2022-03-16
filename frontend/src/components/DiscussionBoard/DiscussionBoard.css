@@ -2,12 +2,46 @@ body{
     margin-top:20px;
     color: #1a202c;
     text-align: left;
-    background-color: #e2e8f0;    
+    background-color: #105fc7;    
+
 }
+
+.overflow-auto {
+
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  overflow-y: scroll; 
+}
+
+.container {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.container-pagination {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    height: 760px;
+}
+.container::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
+.container-pagination::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
+body::-webkit-scrollbar {
+  display: none!important; /* for Chrome, Safari, and Opera */
+}
+
 .inner-wrapper {
     position: relative;
     height: calc(100vh - 3.5rem);
     transition: transform 0.3s;
+    background-color: rgba(24, 35, 89, 0.85);
+
 }
 @media (min-width: 992px) {
     .sticky-navbar .inner-wrapper {
@@ -17,6 +51,7 @@ body{
 .ql-editor{
     min-height:300px;
 }
+/*spravy*/
 .inner-main,
 .inner-sidebar {
     position: absolute;
@@ -28,8 +63,8 @@ body{
 .inner-sidebar {
     left: 0;
     width: 245px;
-    border-right: 1px solid #cbd5e0;
-    background-color: #fff;
+    /*separator medzi profilmi a spravami*/
+    border: 1px solid #596280;
     z-index: 1;
 }
 .inner-main {
@@ -41,7 +76,6 @@ body{
 .inner-sidebar-footer,
 .inner-sidebar-header {
     height: 3.5rem;
-    border-bottom: 1px solid #cbd5e0;
     display: flex;
     align-items: center;
     padding: 0 1rem;
@@ -50,7 +84,6 @@ body{
 .inner-main-body,
 .inner-sidebar-body {
     padding: 1rem;
-    overflow-y: auto;
     position: relative;
     flex: 1 1 auto;
     overflow-x: hidden;
@@ -61,7 +94,12 @@ body{
 }
 .inner-main-footer,
 .inner-main-header {
-    background-color: #fff;
+    /*horna lista*/
+    position: relative !important;
+    margin-left: -10 !important;
+    left: 10px !important;
+
+    background-color: rgb(245, 241, 241);
 }
 .inner-main-footer,
 .inner-sidebar-footer {
@@ -85,43 +123,20 @@ body{
     }
 }
 
-.nav .show>.nav-link.nav-link-faded, .nav-link.nav-link-faded.active, .nav-link.nav-link-faded:active, .nav-pills .nav-link.nav-link-faded.active, .navbar-nav .show>.nav-link.nav-link-faded {
-    color: #3367b5;
-    background-color: #c9d8f0;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-    color: #fff;
-    background-color: #467bcb;
-}
-.nav-link.has-icon {
-    display: flex;
-    align-items: center;
-}
-.nav-link.active {
-    color: #467bcb;
-}
-.nav-pills .nav-link {
-    border-radius: .25rem;
-}
-
-.nav-link {
-    color: #4a5568;
-}
 .card {
     box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
-}
-
-.card {
-    position: relative;
+    position: absolute;
     display: flex;
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
-    background-color: #fff;
+    /*background-color: #000000;*/
+    background-color:#1A233A !important;
     background-clip: border-box;
-    border: 0 solid rgba(0,0,0,.125);
+    border: 0 solid rgba(255, 0, 0, 0.125);
     border-radius: .25rem;
+        -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
 }
 
 .card-body {
@@ -130,20 +145,6 @@ body{
     padding: 1rem;
 }
 
-body{
-    background-color: #f4f7f6;
-    margin-top:20px;
-}
-.card {
-    background: #fff;
-    transition: .5s;
-    border: 0;
-    margin-bottom: 30px;
-    border-radius: .55rem;
-    position: relative;
-    width: 100%;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
-}
 .chat-app .people-list {
     width: 240px;
     position: absolute;
@@ -205,109 +206,9 @@ body{
     font-size: 13px
 }
 
-.chat .chat-header {
-    padding: 15px 20px;
-    border-bottom: 2px solid #f4f7f6
-}
 
-.chat .chat-header img {
-    float: left;
-    border-radius: 40px;
-    width: 40px
-}
 
-.chat .chat-header .chat-about {
-    float: left;
-    padding-left: 10px
-}
 
-.chat .chat-history {
-    padding: 20px;
-    border-bottom: 2px solid #fff
-}
-
-.chat .chat-history ul {
-    padding: 0
-}
-
-.chat .chat-history ul li {
-    list-style: none;
-    margin-bottom: 30px
-}
-
-.chat .chat-history ul li:last-child {
-    margin-bottom: 0px
-}
-
-.chat .chat-history .message-data {
-    margin-bottom: 15px
-}
-
-.chat .chat-history .message-data img {
-    border-radius: 40px;
-    width: 40px
-}
-
-.chat .chat-history .message-data-time {
-    color: #434651;
-    padding-left: 6px
-}
-
-.chat .chat-history .message {
-    color: #444;
-    padding: 18px 20px;
-    line-height: 26px;
-    font-size: 16px;
-    border-radius: 7px;
-    display: inline-block;
-    position: relative
-}
-
-.chat .chat-history .message:after {
-    bottom: 100%;
-    left: 7%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-bottom-color: #fff;
-    border-width: 10px;
-    margin-left: -10px
-}
-
-.chat .chat-history .my-message {
-    background: #efefef
-}
-
-.chat .chat-history .my-message:after {
-    bottom: 100%;
-    left: 30px;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-bottom-color: #efefef;
-    border-width: 10px;
-    margin-left: -10px
-}
-
-.chat .chat-history .other-message {
-    background: #e8f1f3;
-    text-align: right
-}
-
-.chat .chat-history .other-message:after {
-    border-bottom-color: #e8f1f3;
-    left: 93%
-}
-
-.chat .chat-message {
-    padding: 20px
-}
 
 .online,
 .offline,

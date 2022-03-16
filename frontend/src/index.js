@@ -12,7 +12,7 @@ getChainOptions().then((chainOptions) => {
   ReactDOM.render(
     <React.StrictMode>
       <WalletProvider {...chainOptions}>
-        <App />
+          <App />
       </WalletProvider>
       ,
     </React.StrictMode>,

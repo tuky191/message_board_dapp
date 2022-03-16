@@ -43,9 +43,11 @@ function Paginator ({ itemsPerPage, items }) {
         };
 
         return (
-            <> 
+            <div className="container" >
+                <div className="container-pagination"> 
                 <Items currentItems={currentItems} />
-                <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
+            </div>
+            <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
                     <ReactPaginate
                         breakLabel="..."
                         onPageChange={handlePageClick}
@@ -63,10 +65,10 @@ function Paginator ({ itemsPerPage, items }) {
                         previousClassName='page-item'
                         nextClassName='page-item'
                         previousLinkClassName='page-link'
-                        nextLinkClassName='page-link' 
+                        nextLinkClassName='page-link'
                         />
-                </div>
-            </>
+            </div>
+            </div>
         );
     }
 
