@@ -254,7 +254,6 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 setIsProfileModalVisible(false);
                             }}
                             className='modal-dialog modal-lg'
-                            title='Profile'
                             footer={[
                                 <div>
                                 </div>

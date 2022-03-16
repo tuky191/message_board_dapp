@@ -89,11 +89,13 @@ body::-webkit-scrollbar {
 .inner-main-footer,
 .inner-main-header {
       /*horna lista*/
-    position: relative !important;
-    margin-left: -10 !important;
-    left: 10px !important;
-
-    background-color: rgb(245, 241, 241);
+    position: relative;
+    margin-left: -10;
+    left: 10px;
+    color:#c9d8f0;
+ /* background-color: rgba(137, 139, 26, 0.726);*/
+    background: url("./images/797.jpg");
+    object-fit: contain;
 }
 .inner-main-footer,
 .inner-sidebar-footer {
@@ -194,12 +196,12 @@ body::-webkit-scrollbar {
 }
 
 .people-list .chat-list li:hover {
-    background: #efefef;
+    background: rgba(24, 35, 89, 0.85);
     cursor: pointer
 }
 
 .people-list .chat-list li.active {
-    background: #efefef
+    background: rgba(24, 35, 89, 0.85);
 }
 
 .people-list .chat-list li .name {

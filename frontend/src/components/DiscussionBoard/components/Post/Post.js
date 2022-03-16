@@ -19,9 +19,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
 
             )
         }
-
     }
-
     useEffect(() => {
         (async () => {
             setPostLikesCount(PostlikesCount)
