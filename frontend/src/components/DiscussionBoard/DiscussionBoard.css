@@ -1,9 +1,17 @@
 body{
-    margin-top:20px;
-    color: #1a202c;
-    text-align: left;
-    background-color: #e2e8f0;    
-    
+    color: #f2f2f3;
+    text-align: left;    
+}
+.overflow-auto {
+
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  overflow-y: scroll; 
+}
+.container {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
 .container-pagination {
     overflow-y: scroll;
@@ -217,11 +225,6 @@ body::-webkit-scrollbar {
     color: #999;
     font-size: 13px
 }
-
-
-
-
-
 .online,
 .offline,
 .me {
