@@ -5,7 +5,7 @@ import ReactHtmlParser from 'react-html-parser'
 import LikeButton from '../LikeButton/LikeButton'
 import styles from './post.module.css'
 
-const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
+const Post = ({ profileImage, owner, time, subject, content, attachement, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
@@ -35,6 +35,20 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
         console.log(PostlikesCount);
     }, [PostlikesCount])
    */
+    const showAttachement = (raw_attachement) => {
+        console.log(raw_attachement)
+        let attachement_array = (!raw_attachement == null) ? []: raw_attachement.split(",");
+        let filtered_array = attachement_array.filter(function (e) { return e !== 'undefined' })
+        console.log(filtered_array)
+        return filtered_array.map((attached_file, index) => {        
+                    return (
+                    <div>
+                            <a href={attached_file}><div className="fas fa-file-download"></div></a>
+                    </div>
+                    )
+        })
+    }
+
     return (
         <>
             <div className="card mb-2">
@@ -48,6 +62,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
                                         <div className={styles.text}>{ReactHtmlParser(clean)}</div>
                                     </div>
                             </span>
+                                {showAttachement(attachement)}  
                                 <p className="text-muted"><a href="\#" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                                 <span className="text-muted"><span className="text-secondary font-weight-bold">
                                 {showLikeButton()}

@@ -124,7 +124,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
             subject: messages[j].subject,
             content: messages[j].content,
             created: messages[j].created,
-            attachment: messages[j].attachment,
+            attachement: messages[j].attachement,
             likes: messages[j].likes,
             message_id: messages[j]['message_id'],
             thread_id: thread_id,
@@ -156,13 +156,13 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
     }
 
 
-    const submitPost = async (message) => {
+    const submitPost = async () => {
       setUpdating(true);
       try {
         let message = forumMessage;
+        console.log(message);
         message.created = convert_epoch(new Date()).toString();
         message.attachement = message.attachement || ''
-        console.log(message);
         await execute.createMessage(connectedWallet, message);
         await refreshPosts();
       }
