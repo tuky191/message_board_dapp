@@ -7,7 +7,7 @@ import styles from './post.module.css'
 import { Button, Form } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import {IPFS} from "../IPFS/IPFS";
-const Post = ({ profileImage, owner, time, subject, content, attachement, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
+const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
@@ -53,9 +53,9 @@ const Post = ({ profileImage, owner, time, subject, content, attachement, alias,
         send_request()
     }
 
-    const showAttachement = (raw_attachement) => {
-        let attachement_array = (!raw_attachement == null) ? []: raw_attachement.split(",");
-        let filtered_array = attachement_array.filter(function (e) { return e !== 'undefined' })
+    const showAttachment = (raw_attachment) => {
+        let attachment_array = (!raw_attachment == null) ? []: raw_attachment.split(",");
+        let filtered_array = attachment_array.filter(function (e) { return e !== 'undefined' })
         return filtered_array.map((attached_file, index) => {        
                     return (
                     <div>
@@ -83,7 +83,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachement, alias,
                                         <div className={styles.text}>{ReactHtmlParser(clean)}</div>
                                     </div>
                             </span>
-                                {showAttachement(attachement)}  
+                                {showAttachment(attachment)}  
                                 <p className="text-muted"><a href="\#" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                                 <span className="text-muted"><span className="text-secondary font-weight-bold">
                                 <div className="row">

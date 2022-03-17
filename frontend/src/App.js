@@ -24,7 +24,7 @@ import Spinner from './components/Spinner/Spinner'
     const [userProfile, setUserProfile] = useState({})
     const [userProfiles, setUserProfiles] = useState([])
 
-    const [forumMessage, setForumMessage] = useState({content:'', subject:'', attachement:[]})
+    const [forumMessage, setForumMessage] = useState({content:'', subject:'', attachment:[]})
     const { status } = useWallet()
     const allThreads = []
     const [threads, setThreads] = useState([])
@@ -124,7 +124,7 @@ import Spinner from './components/Spinner/Spinner'
             subject: messages[j].subject,
             content: messages[j].content,
             created: messages[j].created,
-            attachement: messages[j].attachement,
+            attachment: messages[j].attachment,
             likes: messages[j].likes,
             message_id: messages[j]['message_id'],
             thread_id: thread_id,
@@ -162,7 +162,7 @@ import Spinner from './components/Spinner/Spinner'
         let message = forumMessage;
         console.log(message);
         message.created = convert_epoch(new Date()).toString();
-        message.attachement = message.attachement || ''
+        message.attachment = message.attachment.length() === 0 || message.attachment.push({cid: '', filename: ''})
         console.log(message)
         await execute.createMessage(connectedWallet, message);
         await refreshPosts();

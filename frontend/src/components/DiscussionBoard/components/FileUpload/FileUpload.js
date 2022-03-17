@@ -5,12 +5,12 @@ import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { IPFS } from "../IPFS/IPFS";
 
-const FileUpload = ({ changeAttachement}) => {
+const FileUpload = ({ changeAttachment}) => {
 
     const { Dragger } = Upload;
     const {uploadFile} = IPFS();
 
-    const uploadAttachement = ({
+    const uploadAttachment = ({
             file,
             onSuccess,
             onError
@@ -34,19 +34,19 @@ const FileUpload = ({ changeAttachement}) => {
         showUploadList: {
             showRemoveIcon: false
         },
-        customRequest: uploadAttachement,
+        customRequest: uploadAttachment,
         onChange(info) {
             const { status } = info.file;
             if (status !== 'uploading') {
             }
             if (status === 'done') {
-                changeAttachement({ url: info.file.response.url, filename: info.file.name})
+                changeAttachment({ url: info.file.response.url, filename: info.file.name})
                 message.success(`${info.file.name} file uploaded successfully.`);
             } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
-                changeAttachement(info.file.response.url)
+                changeAttachment(info.file.response.url)
             } else if (status === 'removed') {
-                changeAttachement('')
+                changeAttachment('')
             }
         },
         onDrop(e) {

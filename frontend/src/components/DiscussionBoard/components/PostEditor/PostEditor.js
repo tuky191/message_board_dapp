@@ -23,12 +23,12 @@ const PostEditor = ({ setForumMessage }) => {
         })))
     }
 
-    const changeAttachement = (value) => {
+    const changeAttachment = (value) => {
   
         setForumMessage(forumMessage => (            
             {
             ...forumMessage,
-            attachement: [...forumMessage.attachement, value]
+            attachment: [...forumMessage.attachment, value]
            }),
         );
         
@@ -46,7 +46,7 @@ const PostEditor = ({ setForumMessage }) => {
                     <Form.Item><MyCustomQuill setText={changeContent}></MyCustomQuill></Form.Item>
                 </div>
                 <div className="form-group">
-                    <Form.Item><FileUpload changeAttachement={changeAttachement}/></Form.Item>
+                    <Form.Item><FileUpload changeAttachment={changeAttachment}/></Form.Item>
                 </div> 
             </div>
         </Form>
