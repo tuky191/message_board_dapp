@@ -9,7 +9,7 @@ import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 import Paginator from "./components/Paginator/Paginator"
-//import DisconnectWallet from "../TerraWallet/DisconnectWallet"
+import {DisconnectWallet} from "../TerraWallet/DisconnectWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -192,7 +192,12 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 <span className="input-icon input-icon-sm ml-auto w-auto">
                                     <input type="text" className={"form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4"} placeholder="Search forum" />
                                 </span>
+
                                */}
+                                <span className="input-icon input-icon-sm ml-auto w-auto">
+                                    <DisconnectWallet/>
+                                </span>
+                                
                             </div>
                             <div className="container">
                                 <Paginator itemsPerPage={4} items={items} />

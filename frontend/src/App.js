@@ -78,7 +78,7 @@ const App = () => {
         profile.profiles = [];
       }
       
-      console.log(profile);
+     // console.log(profile);
       if (profile.profiles.length === 0) {
         setNewUserModal(true);
         setUserProfile(generateMockProfile())
@@ -179,7 +179,7 @@ const App = () => {
     return (
       <div>
         <ConnectWallet />
-        ({status === WalletStatus.WALLET_CONNECTED && (
+        {status === WalletStatus.WALLET_CONNECTED && (
             <DiscussionBoard threads={threads} 
                              onSubmit={submitData} 
                              showNewUserPopUP={showNewUserPopUP} 
@@ -190,8 +190,7 @@ const App = () => {
                              refreshPosts={refreshPosts} 
                              userProfiles={userProfiles} 
             />
-        )})
-
+        )}
         {status === WalletStatus.WALLET_CONNECTED && updating && <Spinner/>}
       </div>
     )

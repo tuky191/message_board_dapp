@@ -16,7 +16,7 @@ getChainOptions().then((chainOptions) => {
       </WalletProvider>
       ,
     </React.StrictMode>,
-    document.getElementById('root'),
+    document.getElementById('root')
   )
 })
 

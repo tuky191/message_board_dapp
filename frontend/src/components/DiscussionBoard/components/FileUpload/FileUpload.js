@@ -16,13 +16,11 @@ const FileUpload = ({ changeAttachment}) => {
             onError
         }) => {
         let send_request = async () => {
-            const res = await uploadFile(file)
-            let url = 'https://ipfs.io/ipfs/' + res
-            if (res) {
-                onSuccess({url: url,
-                filename: file.name})
+            const cid = await uploadFile(file)
+            if (cid) {
+                onSuccess({cid: cid, filename: file.name})
             } else {
-                onError({url: '',
+                onError({cid: '',
                          filename: file.name})
             }
         }
@@ -40,7 +38,7 @@ const FileUpload = ({ changeAttachment}) => {
             if (status !== 'uploading') {
             }
             if (status === 'done') {
-                changeAttachment({ url: info.file.response.url, filename: info.file.name})
+                changeAttachment({ cid: info.file.response.cid, filename: info.file.name})
                 message.success(`${info.file.name} file uploaded successfully.`);
             } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
@@ -50,7 +48,7 @@ const FileUpload = ({ changeAttachment}) => {
             }
         },
         onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files);
+        //    console.log('Dropped files', e.dataTransfer.files);
         }
     };
 

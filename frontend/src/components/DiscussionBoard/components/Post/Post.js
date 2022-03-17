@@ -25,7 +25,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
     useEffect(() => {
         (async () => {
             setPostLikesCount(PostlikesCount)
-            console.log(PostlikesCount)
+      //      console.log(PostlikesCount)
             //refreshPosts()
         })();
            // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,23 +38,22 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
     }, [PostlikesCount])
    */
 
-    const saveFile = (url) => {
-        console.log(url)
+    const saveFile = (attached_file) => {
+        console.log(attached_file)
         //https://ipfs.io/ipfs/QmbEjRgYtzpbUMPDmbeaDguWZyJhP5N77pJijX3HpHUKao
-        let cid = url.replace('https://ipfs.io/ipfs/', '')
         let send_request = async () => {
-            const result = await readFile(cid)
+            const result = await readFile(attached_file.cid)
             const element = document.createElement("a");
             const file = new Blob([result], { type: "*" });
             element.href = URL.createObjectURL(file);
-            element.download = "attachment";
+            element.download = attached_file.filename;
             element.click();
         }
         send_request()
     }
 
     const showAttachment = (attachment) => {
-        console.log(attachment)
+      //  console.log(attachment)
         if (attachment.len !==0) {
             return attachment.map((attached_file, index) => {
                 return (
@@ -62,7 +61,7 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
                         <Button type="primary" shape="round" icon={<DownloadOutlined />} size="small"
                             onClick={() => { saveFile(attached_file) }}
                         >
-                            Download
+                            {attached_file.filename}
                         </Button>
                     </div>
                 )
