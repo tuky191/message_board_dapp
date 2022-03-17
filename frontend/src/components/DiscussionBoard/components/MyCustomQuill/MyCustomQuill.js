@@ -44,7 +44,7 @@ const toolbarContainer = [
 
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
     [{ 'color': [] }, { 'background': [] }],
-    ['emoji', 'image', 'video', 'link'],
+    ['emoji', 'image'],
 
     ['clean']
 ]

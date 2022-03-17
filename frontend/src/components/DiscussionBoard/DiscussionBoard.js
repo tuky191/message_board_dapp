@@ -13,9 +13,7 @@ import Paginator from "./components/Paginator/Paginator"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, setForumMessage, refreshPosts, userProfiles}) => {
-    const [text, setText] = useState('')
-    const [subject, setSubject] = useState('')
+const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, forumMessage, setForumMessage, refreshPosts, userProfiles}) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(showNewUserPopUP);
     const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
@@ -126,14 +124,10 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
         return interval + ' ' + intervalType;
     };
 
-    const submitPost = () => {
-        onSubmit({
-            subject: subject,
-            content: text,
-            method: 'submitPost'
-        })
-        setText('')
-        setSubject('')
+    const submitPost = (e) => {
+        forumMessage['method'] = 'submitPost'
+        onSubmit(forumMessage)
+        setForumMessage({ content: '', subject: '', attachment: [] })
         setIsModalVisible(false)
     }
     const submitSettings = () => {
@@ -193,9 +187,12 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                             <div className="inner-main-header">
                                 <a href="/#" onClick={() => showModalSettings()} ><img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" /></a>
                                 <span>{userProfile.handle}</span>
+                               { /*
+                               Commenting out for now, backend contract has search implemented, will update later on
                                 <span className="input-icon input-icon-sm ml-auto w-auto">
-                                    <input type="text" className="form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4" placeholder="Search forum" />
+                                    <input type="text" className={"form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4"} placeholder="Search forum" />
                                 </span>
+                               */}
                             </div>
                             <div className="container">
                                 <Paginator itemsPerPage={4} items={items} />
@@ -204,26 +201,28 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                         </div>
                     </div>
                     <div>
-                        <Modal
-                            visible={isModalVisible}
-                            onCancel={() => {
-                                setIsModalVisible(false);
-                            }}
-                            className='modal-dialog modal-lg'
-                            title='Say something nice'
-                            footer={[
-                                <div className='row pt-2'>
-                                    <div className='col'>
-                                        <button onClick={submitPost} className='btn btn-primary'>
-                                            Submit
-                                        </button>
+                        {(isModalVisible) ? 
+                            <Modal
+                                visible={isModalVisible}
+                                onCancel={() => {
+                                    setIsModalVisible(false);
+                                }}
+                                className='modal-dialog modal-lg'
+                                title='Say something nice'
+                                footer={[
+                                    <div className='row pt-2'>
+                                        <div className='col'>
+                                            <button onClick={submitPost} className='btn btn-primary'>
+                                                Submit
+                                            </button>
+                                        </div>
                                     </div>
+                                ]}>
+                                <div>
+                                    <PostEditor setForumMessage={setForumMessage} />
                                 </div>
-                            ]}>
-                            <div>
-                                <PostEditor setForumMessage={setForumMessage} />
-                            </div>
-                        </Modal>                        
+                        </Modal> : null}
+                                             
                     </div>
                     <div>
                         <Modal

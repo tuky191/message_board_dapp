@@ -4,7 +4,7 @@ import DOMPurify from 'dompurify'
 import ReactHtmlParser from 'react-html-parser'
 import LikeButton from '../LikeButton/LikeButton'
 import styles from './post.module.css'
-import { Button, Form } from 'antd';
+import { Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import {IPFS} from "../IPFS/IPFS";
 const Post = ({ profileImage, owner, time, subject, content, attachment, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
