@@ -11,13 +11,19 @@
       "contractAddresses": {
         "default": "terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5"
       }
+    },
+    "terra_forum": {
+      "codeId": "2",
+      "contractAddresses": {
+        "default": "terra10pyejy66429refv3g35g2t7am0was7ya7kz2a4"
+      }
     }
   },
   "testnet": {
     "terra_forum": {
-      "codeId": "53081",
+      "codeId": "53597",
       "contractAddresses": {
-        "default": "terra1lvyt6pdnhjeknatkulxx6hl0pd9fsnv0lwfv8q"
+        "default": "terra1702t6vw04h47055zmau5ld2khnuf4wjrkf4rqa"
       }
     }
   }
