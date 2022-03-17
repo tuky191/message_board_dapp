@@ -12,6 +12,8 @@ import Paginator from "./components/Paginator/Paginator"
 import {DisconnectWallet} from "../TerraWallet/DisconnectWallet"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import Button from 'react-bootstrap/Button';
+
 
 const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, forumMessage, setForumMessage, refreshPosts, userProfiles}) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -53,7 +55,9 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                             <ThreadTitle {...thread.related_messages[0]} time={newTime} thread_id={thread_id}  />
                             </div>
                             <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
-                                <a href="/#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
+                            <Button variant="outline-secondary" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}>
+                                <i className="fa fa-arrow-left mr-2"></i>Back
+                            </Button>
                                 {thread.related_messages.map((post, index) => {
                                     const timePost = timeSince(post.created);
                                     return (
