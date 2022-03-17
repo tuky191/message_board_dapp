@@ -15,7 +15,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Spinner from './components/Spinner/Spinner'
 
 
-  const App = () => {
+const App = () => {
 
     const connectedWallet = useConnectedWallet()
 
@@ -163,10 +163,8 @@ import Spinner from './components/Spinner/Spinner'
       setUpdating(true);
       try {
         let message = forumMessage;
-        console.log(message);
         message.created = convert_epoch(new Date()).toString();
         message.attachment = message.attachment.length === 0 ? [] : message.attachment 
-        console.log(message)
         await execute.createMessage(connectedWallet, message);
         setForumMessage({ content: '', subject: '', attachment: [] })
         await refreshPosts();
@@ -181,18 +179,20 @@ import Spinner from './components/Spinner/Spinner'
     return (
       <div>
         <ConnectWallet />
-        {status === WalletStatus.WALLET_CONNECTED && (
+        ({status === WalletStatus.WALLET_CONNECTED && (
             <DiscussionBoard threads={threads} 
                              onSubmit={submitData} 
                              showNewUserPopUP={showNewUserPopUP} 
                              userProfile={userProfile} 
                              setUserProfile={setUserProfile} 
                              setForumMessage={setForumMessage} 
+                             forumMessage={forumMessage}
                              refreshPosts={refreshPosts} 
                              userProfiles={userProfiles} 
             />
-        )}
-        {updating && <Spinner/>}
+        )})
+
+        {status === WalletStatus.WALLET_CONNECTED && updating && <Spinner/>}
       </div>
     )
   }
