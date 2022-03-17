@@ -1,14 +1,14 @@
 import React from 'react'
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from "quill-image-resize-module--fix-imports-error";
-import { ImageDrop } from 'quill-image-drop-module';
+//import { ImageDrop } from 'quill-image-drop-module';
 import 'react-quill/dist/quill.snow.css'
 import { IPFS } from "../IPFS/IPFS";
 
 let BlockEmbed = Quill.import('blots/block/embed');
 class ImageBlot extends BlockEmbed {
     static create(value) {
-        console.log(value)
+       // console.log(value)
         let node = super.create();
         node.setAttribute('alt', value.alt);
         node.setAttribute('src', value.url);
@@ -44,7 +44,7 @@ const toolbarContainer = [
 
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
     [{ 'color': [] }, { 'background': [] }],
-    ['emoji', 'image', 'video', 'link'],
+    ['emoji', 'image'],
 
     ['clean']
 ]
@@ -55,13 +55,13 @@ const formatsContainer = [
     'list', 'bullet', 'indent',
     'link', 'image'
 ]
-const uploadFile = IPFS();
+const {uploadFile} = IPFS();
 
 
 class MyCustomQuill extends React.Component {
     constructor(props) {
         super(props)
-        console.log(props)
+      //  console.log(props)
         this.state = { text: this.props.text || ' ', setText: this.props.setText } // You can also pass a Quill Delta here
 
         this.toolbar = this.props.toolbar || toolbarContainer
@@ -100,7 +100,7 @@ class MyCustomQuill extends React.Component {
             const file = input.files[0]
             const res = await uploadFile(file)
             let url = 'https://ipfs.io/ipfs/' + res
-            console.log(res)
+        //    console.log(res)
             const range = this.quillEditor.getSelection()
             let value = {url: url,
                         alt: url}

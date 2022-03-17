@@ -11,14 +11,17 @@
         "submit_message": {
           "type": "object",
           "required": [
-            "attachement",
+            "attachment",
             "content",
             "created",
             "subject"
           ],
           "properties": {
-            "attachement": {
-              "type": "string"
+            "attachment": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Attachment"
+              }
             },
             "content": {
               "type": "string"
@@ -96,5 +99,22 @@
       },
       "additionalProperties": false
     }
-  ]
+  ],
+  "definitions": {
+    "Attachment": {
+      "type": "object",
+      "required": [
+        "cid",
+        "filename"
+      ],
+      "properties": {
+        "cid": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }

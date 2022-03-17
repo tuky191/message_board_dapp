@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import ReactPaginate from 'react-paginate';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -27,7 +26,7 @@ function Paginator ({ itemsPerPage, items }) {
     }
 
         useEffect(() => {
-            console.log(items)
+        //    console.log(items)
             const endOffset = itemOffset + itemsPerPage;
             setCurrentItems(items.slice(itemOffset, endOffset));
             setPageCount(Math.ceil(items.length / itemsPerPage));
@@ -37,16 +36,15 @@ function Paginator ({ itemsPerPage, items }) {
         const handlePageClick = (event) => {
             const newOffset = (event.selected * itemsPerPage) % items.length;
             setCurrentPage(event.selected)
-            console.log(
-                `User requested page number ${event.selected}, which is offset ${newOffset}`
-            );
             setItemOffset(newOffset);
         };
 
         return (
-            <> 
+            <div className="container" >
+                <div className="container-pagination"> 
                 <Items currentItems={currentItems} />
-                <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
+            </div>
+            <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
                     <ReactPaginate
                         breakLabel="..."
                         onPageChange={handlePageClick}
@@ -58,17 +56,16 @@ function Paginator ({ itemsPerPage, items }) {
                         previousLabel='Previous'
                         nextLabel='Next'
                         breakClassName='page-item'
-                        onPageChange={handlePageClick}
                         containerClassName='pagination'
                         pageClassName='page-item'
                         pageLinkClassName='page-link'
                         previousClassName='page-item'
                         nextClassName='page-item'
                         previousLinkClassName='page-link'
-                        nextLinkClassName='page-link' 
+                        nextLinkClassName='page-link'
                         />
-                </div>
-            </>
+            </div>
+            </div>
         );
     }
 

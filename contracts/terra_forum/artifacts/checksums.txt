@@ -1,1 +1,2 @@
 136f0476c960a5f85fbc7830e6274539b7f6df9e047afb28f383dd9dca008837  message_app.wasm
+2bf64bee47fed8f5620ea319c76ba92caf3bed329daace106079f2f1b04b09ea  terra_forum.wasm

@@ -1,23 +1,17 @@
 {
-  "testnet": {
-    "board": {
-      "codeId": "44332",
+  "localterra": {
+    "terra_forum": {
+      "codeId": "3",
       "contractAddresses": {
-        "default": "terra1lpltw0j09jmrd0ejnhtwepc5myuxa3u6nka3hy"
+        "default": "terra1sh36qn08g4cqg685cfzmyxqv2952q6r8gpczrt"
       }
     }
   },
-  "localterra": {
-    "counter": {
-      "codeId": "1",
+  "testnet": {
+    "terra_forum": {
+      "codeId": "53618",
       "contractAddresses": {
-        "default": "terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5"
-      }
-    },
-    "message_app": {
-      "codeId": "1",
-      "contractAddresses": {
-        "default": "terra18vd8fpwxzck93qlwghaj6arh4p7c5n896xzem5"
+        "default": "terra1qw7lv9h03hnj8vmrlvn0zwmkzzujsmk84jk79y"
       }
     }
   }

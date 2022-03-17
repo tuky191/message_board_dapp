@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react'
 
 import PropTypes from 'prop-types'
 import Post from './components/Post/Post'
+import ThreadTitle from './components/ThreadTitle/ThreadTitle'
 import Profile from './components/Profile/Profile'
 import PostEditor from './components/PostEditor/PostEditor'
 import ProfileEditor from './components/ProfileEditor/ProfileEditor'
 import { Modal } from 'antd';
 import "./DiscussionBoard.css";
 import Paginator from "./components/Paginator/Paginator"
-import DisconnectWallet from "../TerraWallet/DisconnectWallet"
+import {DisconnectWallet} from "../TerraWallet/DisconnectWallet"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, setForumMessage, refreshPosts, userProfiles}) => {
-    const [text, setText] = useState('')
-    const [subject, setSubject] = useState('')
+const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, setUserProfile, forumMessage, setForumMessage, refreshPosts, userProfiles}) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(showNewUserPopUP);
     const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
@@ -41,7 +42,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
     };
 
     const generateItems = () => {
-        {
+        
         return threads.map((thread, idx) => {
             const newTime = timeSince(thread.created);
             const thread_id = thread.thread_id
@@ -49,10 +50,10 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                 <React.Fragment key={idx}>
                     <div id={"myGroup" + thread_id} className="container" >
                         <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
-                                <Post {...thread.related_messages[0]} time={newTime} thread_id={thread_id} refreshPosts={refreshPosts} showLike={false} />
+                            <ThreadTitle {...thread.related_messages[0]} time={newTime} thread_id={thread_id}  />
                             </div>
                             <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id}>
-                                <a href="#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
+                                <a href="/#" className="btn btn-light btn-sm mb-3 has-icon" data-toggle="collapse" data-target={".forum-content" + thread_id} data-parent={"myGroup" + thread_id}><i className="fa fa-arrow-left mr-2"></i>Back</a>
                                 {thread.related_messages.map((post, index) => {
                                     const timePost = timeSince(post.created);
                                     return (
@@ -71,12 +72,13 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                     </div>
                 </React.Fragment>
             );
-        })}
+        })
     }
 
     useEffect(() => {
         setIsSettingsModalVisible(showNewUserPopUP)
         setItems(generateItems())
+           // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threads])
 
 
@@ -122,14 +124,10 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
         return interval + ' ' + intervalType;
     };
 
-    const submitPost = () => {
-        onSubmit({
-            subject: subject,
-            content: text,
-            method: 'submitPost'
-        })
-        setText('')
-        setSubject('')
+    const submitPost = (e) => {
+        forumMessage['method'] = 'submitPost'
+        onSubmit(forumMessage)
+        setForumMessage({ content: '', subject: '', attachment: [] })
         setIsModalVisible(false)
     }
     const submitSettings = () => {
@@ -138,12 +136,10 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
         setIsSettingsModalVisible(false)
     }
 
-
-
     return (
     <><div>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossOrigin="anonymous" />
-            <div className="container">
+            <div>
                 <div className="main-body p-0">
                     <div className="inner-wrapper">
                         <div className="inner-sidebar">
@@ -159,7 +155,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                             <div className="inner-sidebar-body p-0">
                                 <div className="row clearfix">
                                     <div className="col-lg-12">
-                                        <div className="card chat-app">
+                                        <div className="chat-app">
                                             <div id="plist" className="people-list">
                                                 <ul className="list-unstyled chat-list mt-2 mb-0">
                                                     {
@@ -168,11 +164,11 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                                                 
                                                                 <div>
                                                                     <div>
-                                                                        <a onClick={() => showModalProfile(userProfile)}> <li className="clearfix">
+                                                                        <a href="/#" onClick={() => showModalProfile(userProfile)}> <li className="clearfix">
                                                                             <img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" />
                                                                             <div className="about">
                                                                                 <div className="name">{userProfile.handle}</div>
-                                                                                <div className="status"> <i className="fa fa-circle offline"></i> left 7 mins ago </div>
+                                                                                <div className="status"> <i className="fa fa-circle online"></i> online </div>
                                                                             </div>
                                                                         </li></a>
                                                                     </div>
@@ -189,37 +185,49 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                         </div>
                         <div className="inner-main">
                             <div className="inner-main-header">
-                                <a onClick={() => showModalSettings()} ><img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" /></a>
+                                <a href="/#" onClick={() => showModalSettings()} ><img src={userProfile.avatar} className="mr-3 rounded-circle" width="50" alt="User" /></a>
                                 <span>{userProfile.handle}</span>
+                               { /*
+                               Commenting out for now, backend contract has search implemented, will update later on
                                 <span className="input-icon input-icon-sm ml-auto w-auto">
-                                    <input type="text" className="form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4" placeholder="Search forum" />
+                                    <input type="text" className={"form-control form-control-sm bg-gray-200 border-gray-200 shadow-none mb-4 mt-4"} placeholder="Search forum" />
                                 </span>
-                            </div>
 
-                            <Paginator itemsPerPage={4} items={items} />
+                               */}
+                                <span className="input-icon input-icon-sm ml-auto w-auto">
+                                    <DisconnectWallet/>
+                                </span>
+                                
+                            </div>
+                            <div className="container">
+                                <Paginator itemsPerPage={4} items={items} />
+
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <Modal
-                            visible={isModalVisible}
-                            onCancel={() => {
-                                setIsModalVisible(false);
-                            }}
-                            className='modal-dialog modal-lg'
-                            title='Say something nice'
-                            footer={[
-                                <div className='row pt-2'>
-                                    <div className='col'>
-                                        <button onClick={submitPost} className='btn btn-primary'>
-                                            Submit
-                                        </button>
+                        {(isModalVisible) ? 
+                            <Modal
+                                visible={isModalVisible}
+                                onCancel={() => {
+                                    setIsModalVisible(false);
+                                }}
+                                className='modal-dialog modal-lg'
+                                title='Say something nice'
+                                footer={[
+                                    <div className='row pt-2'>
+                                        <div className='col'>
+                                            <button onClick={submitPost} className='btn btn-primary'>
+                                                Submit
+                                            </button>
+                                        </div>
                                     </div>
+                                ]}>
+                                <div>
+                                    <PostEditor setForumMessage={setForumMessage} />
                                 </div>
-                            ]}>
-                            <div>
-                                <PostEditor setForumMessage={setForumMessage} />
-                            </div>
-                        </Modal>                        
+                        </Modal> : null}
+                                             
                     </div>
                     <div>
                         <Modal
@@ -250,8 +258,11 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 setIsProfileModalVisible(false);
                             }}
                             className='modal-dialog modal-lg'
-                            title='Profile'
-                            >
+                            footer={[
+                                <div>
+                                </div>
+                            ]}>
+                            
                             <div>
                                 <Profile profile={currentVisibleProfile}/>
                             </div>

@@ -6,14 +6,9 @@
   font-weight: bold;
 }
 
-
-.subject {
+.subject p {
   margin-bottom: 0;
-  font-weight: bold;
-  color: azure !important;
-
 }
-.text {
-  color: azure;
+.text p {
   margin-bottom: 0;
 }

@@ -1,9 +1,7 @@
 import React from 'react'
-
-import ReactQuill from 'react-quill'
 import './editor.css'
 import 'react-quill/dist/quill.snow.css'
-import { Form, Input, Modal } from 'antd';
+import { Form, Input} from 'antd';
 import 'antd/dist/antd.css';
 import MyCustomQuill from '../MyCustomQuill/MyCustomQuill';
 import FileUpload from "../FileUpload/FileUpload"
@@ -25,11 +23,15 @@ const PostEditor = ({ setForumMessage }) => {
         })))
     }
 
-    const changeAttachement = (value) => {
-        setForumMessage((prevState => ({
-            ...prevState,
-            attachement: prevState.attachement + ',' + value
-        })))
+    const changeAttachment = (value) => {
+  
+        setForumMessage(forumMessage => (            
+            {
+            ...forumMessage,
+            attachment: [...forumMessage.attachment, value]
+           }),
+        );
+        
     }
 
     return <div>
@@ -44,7 +46,7 @@ const PostEditor = ({ setForumMessage }) => {
                     <Form.Item><MyCustomQuill setText={changeContent}></MyCustomQuill></Form.Item>
                 </div>
                 <div className="form-group">
-                    <Form.Item><FileUpload changeAttachement={changeAttachement}/></Form.Item>
+                    <Form.Item><FileUpload changeAttachment={changeAttachment}/></Form.Item>
                 </div> 
             </div>
         </Form>

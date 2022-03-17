@@ -1,5 +1,5 @@
 [package]
-name = "message_app"
+name = "terra_forum"
 version = "0.1.0"
 authors = ["Michal Turcan <michal.turcan.za@gmail.com>"]
 edition = "2018"

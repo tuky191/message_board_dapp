@@ -103,11 +103,38 @@ impl Thread {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct Attachment {
+    cid: String,
+    filename: String
+}
+
+impl Attachment {
+    pub fn new(cid: String, filename : String) -> Attachment {
+        Attachment {
+            cid,
+            filename
+        }
+    }
+    pub fn cid(&mut self) -> &mut String {
+        &mut self.cid
+    }
+    pub fn cid_immut(&self) -> &String {
+        &self.cid
+    }
+    pub fn filename(&mut self) -> &mut String {
+        &mut self.filename
+    }
+    pub fn filename_immut(&self) -> &String {
+        &self.filename
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Post {
     owner: Addr,
     subject: String,
     content: String,
-    attachement: String,
+    attachment: Vec<Attachment>,
     likes: Vec<Addr>,
     thread_id: u32,
     message_id: u32,
@@ -116,13 +143,13 @@ pub struct Post {
 
 
 impl Post {
-    pub fn new(owner:Addr, subject : String, content: String, attachement: String, thread_id: u32, message_id: u32, created: String) -> Post {
+    pub fn new(owner:Addr, subject : String, content: String, attachment: Vec<Attachment>, thread_id: u32, message_id: u32, created: String) -> Post {
         Post {
             owner,
             subject,
             content,
             likes: Vec::new(),
-            attachement,
+            attachment,
             thread_id,
             message_id,
             created
@@ -157,11 +184,11 @@ impl Post {
     pub fn likes_immut(&self) -> &Vec<Addr> {
         &self.likes
     }
-    pub fn attachement(&mut self) -> &mut String {
-        &mut self.attachement
+    pub fn attachment(&mut self) -> &mut Vec<Attachment> {
+        &mut self.attachment
     }
-    pub fn attachement_immut(&self) -> &String {
-        &self.attachement
+    pub fn attachment_immut(&self) -> &Vec<Attachment> {
+        &self.attachment
     }
 
     pub fn created(&mut self) -> &mut String {

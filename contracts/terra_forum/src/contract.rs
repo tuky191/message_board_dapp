@@ -8,6 +8,8 @@ use crate::state::{State, STATE};
 use crate::state::Post;
 use crate::state::Profile;
 use crate::state::Thread;
+use crate::state::Attachment;
+
 //use regex::Regex;
 
 // version info for migration info
@@ -43,7 +45,7 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::SubmitMessage {subject, content, attachement, thread_id, created} => try_submit(deps, info, subject, content, attachement, thread_id, created),
+        ExecuteMsg::SubmitMessage {subject, content, attachment, thread_id, created} => try_submit(deps, info, subject, content, attachment, thread_id, created),
         ExecuteMsg::LikeMessage {index} => try_like(deps, info, index),
         ExecuteMsg::UpdateProfile {handle, avatar, bio, created} => try_update_profile(deps, info, handle, avatar, bio, created),
 
@@ -57,7 +59,7 @@ fn put_and_get_index<T>(v: &mut Vec<T>, item: T) -> usize {
 }
 
 //This should be redesign for hashmap instead vec
-pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachement: String, thread_id_opt: Option<u32>, created: String) -> Result<Response, ContractError> {
+pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: String, attachment: Vec<Attachment>, thread_id_opt: Option<u32>, created: String) -> Result<Response, ContractError> {
     //First enter new post into messages vec, message_id is 0
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
         let thread_id: u32;
@@ -71,7 +73,7 @@ pub fn try_submit(deps: DepsMut, info: MessageInfo, subject: String, content: St
             thread_id = index as u32;            
         } 
        
-        let new_post = Post::new(info.sender, subject, content, attachement, thread_id, 0, created.clone());
+        let new_post = Post::new(info.sender, subject, content, attachment, thread_id, 0, created.clone());
 
         let index = put_and_get_index(&mut state.messages, new_post.clone());
         *state.messages[index].message_id() = index as u32;
@@ -251,14 +253,17 @@ mod tests {
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
+        let mut attachment_vec = Vec::new();
+        let attachment =  Attachment::new(String::from("some cid"), String::from("filename.jpg"));
+        attachment_vec.push(attachment);
 
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: None};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachment: attachment_vec.clone(), created: String::from("1234567890"), thread_id: None};
         println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: None};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachment: attachment_vec.clone(), created: String::from("1234567890"), thread_id: None};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetMessages {}).unwrap();
@@ -269,7 +274,9 @@ mod tests {
         assert_eq!("some subject", posts.get(0).unwrap().subject_immut());
         assert_eq!("some content", posts.get(0).unwrap().content_immut());
 
-        assert_eq!("attachementId", posts.get(0).unwrap().attachement_immut());
+        assert_eq!("some cid", posts.get(0).unwrap().attachment_immut().get(0).unwrap().cid_immut());
+        assert_eq!("filename.jpg", posts.get(0).unwrap().attachment_immut().get(0).unwrap().filename_immut());
+
         assert_eq!("1234567890", posts.get(0).unwrap().created_immut());
         assert_eq!(0, *posts.get(0).unwrap().thread_id_immut());
         assert_eq!("some content", posts.get(0).unwrap().content_immut());
@@ -293,11 +300,14 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
+        let mut attachment_vec = Vec::new();
+        let attachment =  Attachment::new(String::from("some cid"), String::from("filename.jpg"));
+        attachment_vec.push(attachment);
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachment: attachment_vec.clone(), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachment: attachment_vec, created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         let res = query(deps.as_ref(), mock_env(), QueryMsg::GetThreads {}).unwrap();
@@ -326,7 +336,7 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
 
-        let msg = ExecuteMsg::UpdateProfile { handle: String::from("BigBen"), avatar: String::from("attachementId"), bio: String::from("Story of MY LIFE"), created: String::from("1234567890")};
+        let msg = ExecuteMsg::UpdateProfile { handle: String::from("BigBen"), avatar: String::from("attachmentId"), bio: String::from("Story of MY LIFE"), created: String::from("1234567890")};
         println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
@@ -336,7 +346,7 @@ mod tests {
         println!("{:#?}", profiles);
         assert_eq!(1, profiles.len());
         assert_eq!("BigBen", profiles.get(0).unwrap().handle_immut());
-        assert_eq!("attachementId", profiles.get(0).unwrap().avatar_immut());
+        assert_eq!("attachmentId", profiles.get(0).unwrap().avatar_immut());
         assert_eq!("Story of MY LIFE", profiles.get(0).unwrap().bio_immut());
         assert_eq!("1234567890", profiles.get(0).unwrap().created_immut());
     }
@@ -349,7 +359,7 @@ mod tests {
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("creator", &coins(2, "token"));
 
-        let msg = ExecuteMsg::UpdateProfile { handle: String::from("BigBen"), avatar : String::from("attachementId"), bio: String::from("Story of MY LIFE"), created: String::from("1234567890")};
+        let msg = ExecuteMsg::UpdateProfile { handle: String::from("BigBen"), avatar : String::from("attachmentId"), bio: String::from("Story of MY LIFE"), created: String::from("1234567890")};
         println!("{:#?}", msg);
  
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
@@ -361,7 +371,7 @@ mod tests {
         
         assert_eq!(1, profiles.len());
         assert_eq!("BigBen", profiles.get(0).unwrap().handle_immut());
-        assert_eq!("attachementId", profiles.get(0).unwrap().avatar_immut());
+        assert_eq!("attachmentId", profiles.get(0).unwrap().avatar_immut());
         assert_eq!("Story of MY LIFE", profiles.get(0).unwrap().bio_immut());
         assert_eq!("1234567890", profiles.get(0).unwrap().created_immut());
         
@@ -387,10 +397,11 @@ mod tests {
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
-
+        let mut attachment_vec = Vec::new();
+        let attachment =  Attachment::new(String::from("some cid"), String::from("filename.jpg"));
+        attachment_vec.push(attachment);
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachment: attachment_vec, created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
-
         let info = mock_info("anyone", &coins(2, "token"));
         let msg = ExecuteMsg::LikeMessage { index : 0};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
@@ -403,20 +414,24 @@ mod tests {
 
    #[test]
     fn search_post_by_subject_or_content() {
-        //GIVEN
+        
         let mut deps = mock_dependencies(&coins(2, "token"));
         let msg = InstantiateMsg { messages: Vec::new(), profiles: Vec::new() };
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
+        let mut attachment_vec = Vec::new();
+        let attachment =  Attachment::new(String::from("some cid"), String::from("filename.jpg"));
+        attachment_vec.push(attachment);
+
         //MESSAGE #1
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("One Thing is certain, we cannot go that way."), subject : String::from("Subject from the other side"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("One Thing is certain, we cannot go that way."), subject : String::from("Subject from the other side"), attachment: attachment_vec.clone(), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         //MESSAGE #2
         let info = mock_info("anyone", &coins(2, "token"));
-        let msg = ExecuteMsg::SubmitMessage { content: String::from("Mary has a little lamb"), subject : String::from("Is this all there is for me"), attachement: String::from("attachementId"), created: String::from("1234567890"), thread_id: Some(0)};
+        let msg = ExecuteMsg::SubmitMessage { content: String::from("Mary has a little lamb"), subject : String::from("Is this all there is for me"), attachment: attachment_vec.clone(), created: String::from("1234567890"), thread_id: Some(0)};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
 
         //SEARCH BY SUBJECT

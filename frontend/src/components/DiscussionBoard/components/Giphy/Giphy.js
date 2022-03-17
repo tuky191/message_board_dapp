@@ -40,7 +40,7 @@ const Giphy = () => {
     return <div>
         <GridDemo
             onGifClick={(gif, e) => {
-                console.log("gif", gif);
+          //      console.log("gif", gif);
                 e.preventDefault();
                 setModalGif(gif);
             }}

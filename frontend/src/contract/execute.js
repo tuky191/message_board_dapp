@@ -51,7 +51,7 @@ export const createMessage = async (wallet, message) => {
       subject: message.subject,
       content: message.content,
       created: message.created,
-      attachement: message.attachement,
+      attachment: message.attachment,
       thread_id: message.thread_id,
     }
   })(wallet);

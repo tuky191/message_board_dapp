@@ -1,28 +1,27 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './index.css';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { IPFS } from "../IPFS/IPFS";
 
-const FileUpload = ({ changeAttachement}) => {
+const FileUpload = ({ changeAttachment}) => {
 
     const { Dragger } = Upload;
-    const uploadFile = IPFS();
+    const {uploadFile} = IPFS();
 
-    const uploadAttachement = ({
+    const uploadAttachment = ({
             file,
             onSuccess,
             onError
         }) => {
         let send_request = async () => {
-            const res = await uploadFile(file)
-            let url = 'https://ipfs.io/ipfs/' + res
-            if (res) {
-                onSuccess({url: url})
+            const cid = await uploadFile(file)
+            if (cid) {
+                onSuccess({cid: cid, filename: file.name})
             } else {
-                onError({url: ''})
+                onError({cid: '',
+                         filename: file.name})
             }
         }
         send_request()
@@ -33,23 +32,23 @@ const FileUpload = ({ changeAttachement}) => {
         showUploadList: {
             showRemoveIcon: false
         },
-        customRequest: uploadAttachement,
+        customRequest: uploadAttachment,
         onChange(info) {
             const { status } = info.file;
             if (status !== 'uploading') {
             }
             if (status === 'done') {
-                changeAttachement(info.file.response.url)
+                changeAttachment({ cid: info.file.response.cid, filename: info.file.name})
                 message.success(`${info.file.name} file uploaded successfully.`);
             } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
-                changeAttachement(info.file.response.url)
+                changeAttachment(info.file.response.url)
             } else if (status === 'removed') {
-                changeAttachement('')
+                changeAttachment('')
             }
         },
         onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files);
+        //    console.log('Dropped files', e.dataTransfer.files);
         }
     };
 
