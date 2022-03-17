@@ -12,12 +12,13 @@ body{
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    height: 100%;
 }
 .container-pagination {
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    height: 760px;
+    height: 90%;
 }
 .container::-webkit-scrollbar { /* WebKit */
     width: 0;
@@ -29,6 +30,11 @@ body{
 }
 body::-webkit-scrollbar {
   display: none!important; /* for Chrome, Safari, and Opera */
+}
+
+.ant-modal-content {
+  border-radius: 20px;
+  /* background: red; */
 }
 
 .inner-wrapper {
@@ -103,6 +109,9 @@ body::-webkit-scrollbar {
     border-bottom: 0;
     height: auto;
     min-height: 3.5rem;
+}
+.main-body {
+            overflow: hidden;
 }
 @media (max-width: 767.98px) {
     .inner-sidebar {

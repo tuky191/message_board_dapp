@@ -48,7 +48,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
             const thread_id = thread.thread_id
             return (
                 <React.Fragment key={idx}>
-                    <div id={"myGroup" + thread_id} className="container" >
+                    <div id={"myGroup" + thread_id} >
                         <div className={"inner-main-body p-2 p-sm-3 collapse forum-content" + thread_id + " show"} data-parent={"myGroup" + thread_id}>
                             <ThreadTitle {...thread.related_messages[0]} time={newTime} thread_id={thread_id}  />
                             </div>
@@ -199,10 +199,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 </span>
                                 
                             </div>
-                            <div className="container">
-                                <Paginator itemsPerPage={4} items={items} />
-
-                            </div>
+                                <Paginator itemsPerPage={6} items={items} />
                         </div>
                     </div>
                     <div>
@@ -213,7 +210,6 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                     setIsModalVisible(false);
                                 }}
                                 className='modal-dialog modal-lg'
-                                title='Say something nice'
                                 footer={[
                                     <div className='row pt-2'>
                                         <div className='col'>
@@ -236,7 +232,6 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                                 setIsSettingsModalVisible(false);
                             }}
                             className='modal-dialog modal-lg'
-                            title='Profile'
                             footer={[
                                 <div className='row pt-2'>
                                     <div className='col'>
