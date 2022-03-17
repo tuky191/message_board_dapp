@@ -44,7 +44,7 @@ function Paginator ({ itemsPerPage, items }) {
                 <div className="container-pagination"> 
                 <Items currentItems={currentItems} />
             </div>
-            <div className='pagination pagination-sm pagination-circle justify-content-center mb-0'>
+            <div className='pagination pagination-sm pagination-circle justify-content-center mb1'>
                     <ReactPaginate
                         breakLabel="..."
                         onPageChange={handlePageClick}

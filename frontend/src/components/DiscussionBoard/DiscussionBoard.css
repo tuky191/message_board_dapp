@@ -9,7 +9,7 @@ body{
   overflow-y: scroll; 
 }
 .container {
-    overflow-y: scroll;
+    overflow-y: hidden;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     height: 100%;
@@ -18,7 +18,7 @@ body{
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    height: 90%;
+    height: 95%;
 }
 .container::-webkit-scrollbar { /* WebKit */
     width: 0;
@@ -127,6 +127,8 @@ body::-webkit-scrollbar {
         transform: translate3d(235px, 0, 0);
     }
 }
+
+
 
 .nav .show>.nav-link.nav-link-faded, .nav-link.nav-link-faded.active, .nav-link.nav-link-faded:active, .nav-pills .nav-link.nav-link-faded.active, .navbar-nav .show>.nav-link.nav-link-faded {
     color: #3367b5;

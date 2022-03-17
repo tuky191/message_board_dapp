@@ -147,7 +147,7 @@ const App = () => {
 
       }
         
-    setThreads([...allThreads]);
+    setThreads([...allThreads.reverse()]);
     setUpdating(false);
     }
 
