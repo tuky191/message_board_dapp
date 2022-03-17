@@ -100,6 +100,7 @@ const App = () => {
     }
     
     const refreshPosts = async () => {
+      setUpdating(true);
       let threads = [];
       var user_profiles = {}
 
@@ -146,7 +147,8 @@ const App = () => {
 
       }
         
-     setThreads([...allThreads]);
+    setThreads([...allThreads]);
+    setUpdating(false);
     }
 
     const submitProfile = async () => {
