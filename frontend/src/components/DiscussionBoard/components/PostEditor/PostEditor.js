@@ -24,10 +24,14 @@ const PostEditor = ({ setForumMessage }) => {
     }
 
     const changeAttachement = (value) => {
-        setForumMessage((prevState => ({
-            ...prevState,
-            attachement: (prevState.attachement == null) ? value: prevState.attachement + ',' + value
-        })))
+  
+        setForumMessage(forumMessage => (            
+            {
+            ...forumMessage,
+            attachement: [...forumMessage.attachement, value]
+           }),
+        );
+        
     }
 
     return <div>

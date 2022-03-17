@@ -8,7 +8,7 @@ import { IPFS } from "../IPFS/IPFS";
 const FileUpload = ({ changeAttachement}) => {
 
     const { Dragger } = Upload;
-    const uploadFile = IPFS();
+    const {uploadFile} = IPFS();
 
     const uploadAttachement = ({
             file,
@@ -19,9 +19,11 @@ const FileUpload = ({ changeAttachement}) => {
             const res = await uploadFile(file)
             let url = 'https://ipfs.io/ipfs/' + res
             if (res) {
-                onSuccess({url: url})
+                onSuccess({url: url,
+                filename: file.name})
             } else {
-                onError({url: ''})
+                onError({url: '',
+                         filename: file.name})
             }
         }
         send_request()
@@ -38,7 +40,7 @@ const FileUpload = ({ changeAttachement}) => {
             if (status !== 'uploading') {
             }
             if (status === 'done') {
-                changeAttachement(info.file.response.url)
+                changeAttachement({ url: info.file.response.url, filename: info.file.name})
                 message.success(`${info.file.name} file uploaded successfully.`);
             } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);

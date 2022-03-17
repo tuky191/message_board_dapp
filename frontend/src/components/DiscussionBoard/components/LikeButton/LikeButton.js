@@ -5,6 +5,8 @@ import "./styles.scss";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
 import * as execute from '../../../../contract/execute'
 
+import Spinner from '../../../../components/Spinner/Spinner'
+
 const particleList = Array.from(Array(10));
 
 
@@ -15,18 +17,21 @@ const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount, refreshPo
         //check if user has already liked the post
         return (likes?.find(like => like === connectedWallet.walletAddress ? true : false))
     }
+    const [updating, setUpdating] = useState(false)
     const [liked, setLiked] = useState(initiateLikes);
 
     const updateTerra = async (index) => {
+        setUpdating(true)
         await execute.likeMessage(connectedWallet, index)
         setPostLikesCount(liked ? PostlikesCount - 1 : PostlikesCount + 1)
         setLiked(!liked)
-        console.log(index);
         setClicked(true)
         refreshPosts()
+        setUpdating(false)
     }
 
     return (
+        <div>
         <button
             onClick={() => {
                 updateTerra(index)
@@ -58,6 +63,8 @@ const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount, refreshPo
                 <span className={cn("suffix", { liked })}>d</span>
             </div>
         </button>
+        { updating && <Spinner /> }
+        </div>
     );
 };
 

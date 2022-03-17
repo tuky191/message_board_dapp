@@ -12,7 +12,7 @@ import * as query from './contract/query'
 import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import Spinner from './components/Spinner/Spinner'
 
 
   const App = () => {
@@ -24,7 +24,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
     const [userProfile, setUserProfile] = useState({})
     const [userProfiles, setUserProfiles] = useState([])
 
-    const [forumMessage, setForumMessage] = useState({})
+    const [forumMessage, setForumMessage] = useState({content:'', subject:'', attachement:[]})
     const { status } = useWallet()
     const allThreads = []
     const [threads, setThreads] = useState([])
@@ -163,13 +163,14 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
         console.log(message);
         message.created = convert_epoch(new Date()).toString();
         message.attachement = message.attachement || ''
+        console.log(message)
         await execute.createMessage(connectedWallet, message);
         await refreshPosts();
       }
       catch (e) {
         setUpdating(false);
         throw e;
-      }
+      } 
       setUpdating(false);
     }
 
@@ -187,6 +188,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
                              userProfiles={userProfiles} 
             />
         )}
+        {updating && <Spinner/>}
       </div>
     )
   }

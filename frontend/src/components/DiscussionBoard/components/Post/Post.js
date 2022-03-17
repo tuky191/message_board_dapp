@@ -4,12 +4,14 @@ import DOMPurify from 'dompurify'
 import ReactHtmlParser from 'react-html-parser'
 import LikeButton from '../LikeButton/LikeButton'
 import styles from './post.module.css'
-
+import { Button, Form } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import {IPFS} from "../IPFS/IPFS";
 const Post = ({ profileImage, owner, time, subject, content, attachement, alias, likes, message_id, thread_id, refreshPosts, showLike}) => {
     const clean = DOMPurify.sanitize(content)
     const clean_subject = DOMPurify.sanitize(subject)
     const [PostlikesCount, setPostLikesCount] = useState(likes.length)
-
+    const { readFile } = IPFS();
     const showLikeButton = () => {
         if (showLike) {
             return (
@@ -35,15 +37,34 @@ const Post = ({ profileImage, owner, time, subject, content, attachement, alias,
         console.log(PostlikesCount);
     }, [PostlikesCount])
    */
+
+    const saveFile = (url) => {
+        console.log(url)
+        //https://ipfs.io/ipfs/QmbEjRgYtzpbUMPDmbeaDguWZyJhP5N77pJijX3HpHUKao
+        let cid = url.replace('https://ipfs.io/ipfs/', '')
+        let send_request = async () => {
+            const result = await readFile(cid)
+            const element = document.createElement("a");
+            const file = new Blob([result], { type: "*" });
+            element.href = URL.createObjectURL(file);
+            element.download = "attachment";
+            element.click();
+        }
+        send_request()
+    }
+
     const showAttachement = (raw_attachement) => {
-        console.log(raw_attachement)
         let attachement_array = (!raw_attachement == null) ? []: raw_attachement.split(",");
         let filtered_array = attachement_array.filter(function (e) { return e !== 'undefined' })
-        console.log(filtered_array)
         return filtered_array.map((attached_file, index) => {        
                     return (
                     <div>
-                            <a href={attached_file}><div className="fas fa-file-download"></div></a>
+                                <Button type="primary" shape="round" icon={<DownloadOutlined />} size="small"
+                                onClick={() => {saveFile(attached_file)}}
+                                >
+                                 Download
+                                </Button>
+                            
                     </div>
                     )
         })
@@ -65,12 +86,21 @@ const Post = ({ profileImage, owner, time, subject, content, attachement, alias,
                                 {showAttachement(attachement)}  
                                 <p className="text-muted"><a href="\#" data-toggle="tooltip" title={owner}>{alias}</a> posted <span className="text-secondary font-weight-bold"> {time} ago</span></p>
                                 <span className="text-muted"><span className="text-secondary font-weight-bold">
-                                {showLikeButton()}
-                            </span></span>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        {showLikeButton()}
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="text-right align-self-center">
+                                            <span className="d-none d-sm-inline-block"><i className="fa fa-heart"></i> {PostlikesCount}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </span>
+                        </span>
                         </div>
-                        <div className="text-muted small text-center align-self-center">
-                                <span className="d-none d-sm-inline-block"><i className="fa fa-heart"></i> {PostlikesCount}</span>
-                        </div>
+                        
                     </div>
                 </div>
             </div>  
