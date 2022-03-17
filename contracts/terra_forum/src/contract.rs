@@ -397,14 +397,11 @@ mod tests {
         let info = mock_info("creator", &coins(2, "token"));
         let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
         let info = mock_info("anyone", &coins(2, "token"));
-
         let mut attachment_vec = Vec::new();
         let attachment =  Attachment::new(String::from("some cid"), String::from("filename.jpg"));
         attachment_vec.push(attachment);
         let msg = ExecuteMsg::SubmitMessage { content: String::from("some content"), subject : String::from("some subject"), attachment: attachment_vec, created: String::from("1234567890"), thread_id: Some(0)};
-
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
-
         let info = mock_info("anyone", &coins(2, "token"));
         let msg = ExecuteMsg::LikeMessage { index : 0};
         let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();

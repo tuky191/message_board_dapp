@@ -53,21 +53,22 @@ const Post = ({ profileImage, owner, time, subject, content, attachment, alias, 
         send_request()
     }
 
-    const showAttachment = (raw_attachment) => {
-        let attachment_array = (!raw_attachment == null) ? []: raw_attachment.split(",");
-        let filtered_array = attachment_array.filter(function (e) { return e !== 'undefined' })
-        return filtered_array.map((attached_file, index) => {        
-                    return (
+    const showAttachment = (attachment) => {
+        console.log(attachment)
+        if (attachment.len !==0) {
+            return attachment.map((attached_file, index) => {
+                return (
                     <div>
-                                <Button type="primary" shape="round" icon={<DownloadOutlined />} size="small"
-                                onClick={() => {saveFile(attached_file)}}
-                                >
-                                 Download
-                                </Button>
-                            
+                        <Button type="primary" shape="round" icon={<DownloadOutlined />} size="small"
+                            onClick={() => { saveFile(attached_file) }}
+                        >
+                            Download
+                        </Button>
                     </div>
-                    )
-        })
+                )
+            })
+        }
+
     }
 
     return (

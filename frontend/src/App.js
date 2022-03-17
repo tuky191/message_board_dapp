@@ -162,7 +162,7 @@ import Spinner from './components/Spinner/Spinner'
         let message = forumMessage;
         console.log(message);
         message.created = convert_epoch(new Date()).toString();
-        message.attachment = message.attachment.length() === 0 || message.attachment.push({cid: '', filename: ''})
+        message.attachment = message.attachment.length === 0 ? [] : message.attachment 
         console.log(message)
         await execute.createMessage(connectedWallet, message);
         await refreshPosts();
