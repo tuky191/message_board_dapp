@@ -5,11 +5,11 @@ export const Spinner = () => {
 
     return (
         <div className="SpinnerWrapper">
-            <div class="loader loader-white">
-                <div class="loader-spined">
-                    <div class="loader--icon">
-                        <i class="fa fa-rocket offset-45deg"></i>
-                        <div class="pufs">
+            <div className="loader loader-white">
+                <div className="loader-spined">
+                    <div className="loader--icon">
+                        <i className="fa fa-rocket offset-45deg"></i>
+                        <div className="pufs">
                             <i></i><i></i><i></i>
                             <i></i><i></i><i></i>
                             <i></i><i></i><i></i>
@@ -26,7 +26,7 @@ export const Spinner = () => {
                             <i></i><i></i><i></i>
                             <i></i><i></i><i></i>
                         </div>
-                        <div class="particles">
+                        <div className="particles">
                             <i></i><i></i><i></i>
                             <i></i><i></i><i></i>
                             <i></i><i></i><i></i>

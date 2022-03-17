@@ -33,7 +33,6 @@ const App = () => {
       (async () => {
         
         if (connectedWallet) {
-          setUpdating(true);
           checkIfUserHasProfile();
           try {
             setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
@@ -41,25 +40,19 @@ const App = () => {
             setUserProfiles([])
           }
           await refreshPosts();
-          setUpdating(false);
-        }
-        
+        }        
       })();
          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectedWallet]);
-
 
     const convert_epoch = (date) =>{
       return Date.parse(date)
     }
 
     const generateMockProfile = () => {
-      if (updating) {
-          //console.log(updating)
-      }
         const getRandomElement = (List) => {
-        return List[Math.floor(Math.random() * List.length)]
-      }
+          return List[Math.floor(Math.random() * List.length)]
+        }
       const handles = ["blissfulavocado", "gloomycheddar", "BionicBeaver", "StoicFranklin", "RustyTheCruty", "Juul"];
       const avatars = ["https://bootdey.com/img/Content/avatar/avatar1.png", "https://bootdey.com/img/Content/avatar/avatar2.png", "https://bootdey.com/img/Content/avatar/avatar3.png", "https://bootdey.com/img/Content/avatar/avatar4.png", "https://bootdey.com/img/Content/avatar/avatar5.png", "https://bootdey.com/img/Content/avatar/avatar6.png", "https://bootdey.com/img/Content/avatar/avatar7.png"];
       const bios = ['Too dead to die.', "I’m not always sarcastic. Sometimes, I’m sleeping.", "I prefer my puns intended.", "Just another papercut survivor.", 'Write something about you. What do you like more, cats or dogs? Why dogs?']
@@ -82,11 +75,9 @@ const App = () => {
       if (profile.profiles.length === 0) {
         setNewUserModal(true);
         setUserProfile(generateMockProfile())
-        setUpdating(false);
       } else {
         setUserProfile(profile.profiles[0])
         setNewUserModal(false);
-        setUpdating(false);
       }
     }
 
@@ -100,6 +91,7 @@ const App = () => {
     }
     
     const refreshPosts = async () => {
+      setUpdating(true);
       let threads = [];
       var user_profiles = {}
 
@@ -146,7 +138,8 @@ const App = () => {
 
       }
         
-     setThreads([...allThreads]);
+    setThreads([...allThreads.reverse()]);
+    setUpdating(false);
     }
 
     const submitProfile = async () => {

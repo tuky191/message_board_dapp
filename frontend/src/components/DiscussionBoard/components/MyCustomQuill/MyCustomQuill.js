@@ -4,6 +4,9 @@ import ImageResize from "quill-image-resize-module--fix-imports-error";
 //import { ImageDrop } from 'quill-image-drop-module';
 import 'react-quill/dist/quill.snow.css'
 import { IPFS } from "../IPFS/IPFS";
+import * as Emoji from "quill-emoji";
+import "quill-emoji/dist/quill-emoji.css";
+
 
 let BlockEmbed = Quill.import('blots/block/embed');
 class ImageBlot extends BlockEmbed {
@@ -29,6 +32,8 @@ ImageBlot.tagName = 'img';
 
 Quill.register("modules/imageResize", ImageResize);
 //Quill.register('modules/imageDrop', ImageDrop);
+Quill.register("modules/emoji", Emoji);
+
 Quill.register(ImageBlot);
 
 const toolbarContainer = [
@@ -41,19 +46,17 @@ const toolbarContainer = [
     [{ 'direction': 'rtl' }],                         // text direction
     [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
     ['blockquote', 'code-block'],
-
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
     [{ 'color': [] }, { 'background': [] }],
-    ['emoji', 'image'],
-
-    ['clean']
+    ['emoji', 'image']
 ]
 
 const formatsContainer = [
     'header',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
     'list', 'bullet', 'indent',
-    'link', 'image'
+    'link', 'image', 'emoji', 'size', 'font', 'align', 'color', 'background',
+    'code-block', 'script'
 ]
 const {uploadFile} = IPFS();
 
@@ -75,10 +78,13 @@ class MyCustomQuill extends React.Component {
         this.modules = {
             toolbar: {
                 container: this.toolbar,
-                    handlers: { image: this.imageHandler }
+                handlers: { image: this.imageHandler, 'emoji': function () {} }
             },
             //   imageDrop: true,
-            imageResize: { parchment: Quill.import('parchment') }
+            imageResize: { parchment: Quill.import('parchment') },
+            "emoji-toolbar": false,
+            "emoji-textarea": true,
+            "emoji-shortname": true,
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -100,7 +106,6 @@ class MyCustomQuill extends React.Component {
             const file = input.files[0]
             const res = await uploadFile(file)
             let url = 'https://ipfs.io/ipfs/' + res
-        //    console.log(res)
             const range = this.quillEditor.getSelection()
             let value = {url: url,
                         alt: url}
