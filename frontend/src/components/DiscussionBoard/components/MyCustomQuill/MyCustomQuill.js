@@ -55,7 +55,7 @@ const formatsContainer = [
     'list', 'bullet', 'indent',
     'link', 'image'
 ]
-const uploadFile = IPFS();
+const {uploadFile} = IPFS();
 
 
 class MyCustomQuill extends React.Component {

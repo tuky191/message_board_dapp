@@ -26,7 +26,7 @@ const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount, refreshPo
         setPostLikesCount(liked ? PostlikesCount - 1 : PostlikesCount + 1)
         setLiked(!liked)
         setClicked(true)
-        refreshPosts()
+        //refreshPosts()
         setUpdating(false)
     }
 

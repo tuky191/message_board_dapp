@@ -31,8 +31,9 @@ import Spinner from './components/Spinner/Spinner'
         
     useEffect(() => {
       (async () => {
-        setUpdating(true);
+        
         if (connectedWallet) {
+          setUpdating(true);
           checkIfUserHasProfile();
           try {
             setUserProfiles((await query.getProfiles(connectedWallet)).profiles)
@@ -40,8 +41,9 @@ import Spinner from './components/Spinner/Spinner'
             setUserProfiles([])
           }
           await refreshPosts();
+          setUpdating(false);
         }
-        setUpdating(false);
+        
       })();
          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connectedWallet]);
@@ -67,23 +69,24 @@ import Spinner from './components/Spinner/Spinner'
         bio: getRandomElement(bios)
       }
     }
-
+ 
     const checkIfUserHasProfile = async() => {
       let profile = {};
       try {
         profile = await query.getProfileByAddress(connectedWallet, connectedWallet.walletAddress);
       } catch {
         profile.profiles = [];
-        console.log(profile)
       }
       
-     // console.log(profile);
+      console.log(profile);
       if (profile.profiles.length === 0) {
         setNewUserModal(true);
         setUserProfile(generateMockProfile())
+        setUpdating(false);
       } else {
         setUserProfile(profile.profiles[0])
         setNewUserModal(false);
+        setUpdating(false);
       }
     }
 
@@ -165,6 +168,7 @@ import Spinner from './components/Spinner/Spinner'
         message.attachment = message.attachment.length === 0 ? [] : message.attachment 
         console.log(message)
         await execute.createMessage(connectedWallet, message);
+        setForumMessage({ content: '', subject: '', attachment: [] })
         await refreshPosts();
       }
       catch (e) {
