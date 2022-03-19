@@ -29,7 +29,6 @@ const LikeButton = ({ index, likes, setPostLikesCount, PostlikesCount, refreshPo
         //refreshPosts()
         setUpdating(false)
     }
-
     return (
         <div>
         <button

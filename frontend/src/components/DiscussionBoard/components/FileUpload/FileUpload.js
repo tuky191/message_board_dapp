@@ -9,7 +9,6 @@ const FileUpload = ({ changeAttachment}) => {
 
     const { Dragger } = Upload;
     const {uploadFile} = IPFS();
-
     const uploadAttachment = ({
             file,
             onSuccess,

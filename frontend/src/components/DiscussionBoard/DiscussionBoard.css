@@ -1,5 +1,5 @@
 body{
-    color: #f2f2f3;
+    color: #000000;
     text-align: left;    
 }
 .overflow-auto {
@@ -182,6 +182,9 @@ body::-webkit-scrollbar {
     }
     .inner-expand .inner-wrapper {
         transform: translate3d(235px, 0, 0);
+    }
+    .btn-discussion {
+        position: relative;
     }
 }
 

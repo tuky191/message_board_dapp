@@ -13,8 +13,7 @@ import { ConnectWallet } from './components/TerraWallet/ConnectWallet'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Spinner from './components/Spinner/Spinner'
-
-
+import GenericModal from './components/Modals/GenericModal'
 const App = () => {
 
     const connectedWallet = useConnectedWallet()
@@ -23,7 +22,9 @@ const App = () => {
     const [showNewUserPopUP, setNewUserModal] = useState(false)
     const [userProfile, setUserProfile] = useState({})
     const [userProfiles, setUserProfiles] = useState([])
-
+    const [title, setTitle] = useState('')
+    const [body, setBody] = useState('')
+    const [isGenericModalVisible, setIsGenericModalVisible] = useState(false)
     const [forumMessage, setForumMessage] = useState({content:'', subject:'', attachment:[]})
     const { status } = useWallet()
     const allThreads = []
@@ -146,7 +147,15 @@ const App = () => {
       setUpdating(true);
       let message = userProfile;
       message.created = convert_epoch(new Date()).toString();
-      await execute.updateProfile(connectedWallet, message);
+     // console.log(message)
+      //delete message['created']; 
+      let result = await execute.updateProfile(connectedWallet, message);
+      console.log(result)
+      if (result.logs.length === 0) {
+        setTitle('Well, that was useless!')
+        setBody('Saving of the Profile is harder than it looks, does not compute - operation not permitted')
+        setIsGenericModalVisible(true)
+      }
       await checkIfUserHasProfile();
       await refreshPosts();
     }
@@ -185,6 +194,7 @@ const App = () => {
             />
         )}
         {status === WalletStatus.WALLET_CONNECTED && updating && <Spinner/>}
+        <GenericModal title={title} body={body} setIsGenericModalVisible={setIsGenericModalVisible} isGenericModalVisible={isGenericModalVisible}></GenericModal>
       </div>
     )
   }

@@ -17,7 +17,7 @@ const Profile = ({ profile }) => {
                                 </div>
                             </div>
                 </div>
-            </div>
+        </div>
     )
 }
 

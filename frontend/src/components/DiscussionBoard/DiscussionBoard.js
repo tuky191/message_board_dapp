@@ -148,7 +148,7 @@ const DiscussionBoard = ({ onSubmit, threads, showNewUserPopUP, userProfile, set
                     <div className="inner-wrapper">
                         <div className="inner-sidebar">
                             <div className="inner-sidebar-header justify-content-center">
-                                <button className="btn btn-primary has-icon btn-block" type="button" data-toggle="modal" data-target="#threadModal" onClick={() => activateMessageDialog(null)}>
+                                <button className="btn btn-primary has-icon btn-block btn-discussion" type="button" data-toggle="modal" data-target="#threadModal" onClick={() => activateMessageDialog(null)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-plus mr-2">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
