@@ -1,4 +1,4 @@
-import { useWallet, WalletStatus } from '@terra-dev/use-wallet'
+import { useWallet, WalletStatus } from '@terra-dev/use-wallet';
 import Button from 'react-bootstrap/Button';
 
 export const ConnectWallet = () => {
@@ -8,7 +8,7 @@ export const ConnectWallet = () => {
     availableInstallTypes,
     connect,
     install,
-  } = useWallet()
+  } = useWallet();
 
   return (
     <div>
@@ -16,30 +16,30 @@ export const ConnectWallet = () => {
         <>
           {availableInstallTypes.map((connectType) => (
             <>
-            <Button
-              key={`install-${connectType}`}
-              onClick={() => install(connectType)}
-              type="button"
-              variant="outline-secondary"
-            >
-              Install {connectType}
-            </Button>{' '}
+              <Button
+                key={`install-${connectType}`}
+                onClick={() => install(connectType)}
+                type='button'
+                variant='outline-secondary'
+              >
+                Install {connectType}
+              </Button>{' '}
             </>
           ))}
           {availableConnectTypes.map((connectType) => (
             <>
-            <Button
-              variant="outline-secondary"
-              key={`connect-${connectType}`}
-              onClick={() => connect(connectType)}
-              type="button"
-            >
-              Connect {connectType}
+              <Button
+                variant='outline-secondary'
+                key={`connect-${connectType}`}
+                onClick={() => connect(connectType)}
+                type='button'
+              >
+                Connect {connectType}
               </Button>{' '}
             </>
           ))}
         </>
       )}
     </div>
-  )
-}
+  );
+};
