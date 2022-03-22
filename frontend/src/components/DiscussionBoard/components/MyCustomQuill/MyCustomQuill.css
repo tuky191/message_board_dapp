@@ -1,0 +1,31 @@
+.ql-toolbar .ql-stroke {
+  fill: none;
+  stroke: #fff;
+}
+
+.ql-toolbar .ql-fill {
+  fill: #fff;
+  stroke: none;
+}
+
+.ql-toolbar .ql-picker {
+  color: #fff;
+}
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+  border-top: 0px;
+  color: #fff;
+  border-color: rgba(23, 5, 189, 0.37);
+  background-color: rgba(26, 35, 58, 0.4);
+  border-radius: 20px;
+  margin-top: 10px;
+  transition: border-color 0.3s;
+  border: 1px solid rgba(23, 5, 189, 0.37);
+}
+.ql-toolbar.ql-snow {
+  color: #fff;
+  border-color: rgba(23, 5, 189, 0.37);
+  background-color: rgba(26, 35, 58, 0.4);
+  border-radius: 20px;
+  transition: border-color 0.3s;
+  border: 1px solid rgba(23, 5, 189, 0.37);
+}

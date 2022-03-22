@@ -1,0 +1,43 @@
+.ant-upload.ant-upload-drag {
+  border-radius: 20px;
+  background-color: rgba(26, 35, 58, 0.4) !important;
+  border: 1px dashed rgb(16, 27, 90);
+  color: white;
+}
+
+.ant-upload.ant-upload-drag p.ant-upload-text {
+  margin: 0 0 4px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 16px;
+}
+
+.ant-upload.ant-upload-drag p.ant-upload-hint {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 14px;
+}
+
+.ant-input {
+  color: #fff;
+  border-color: rgba(23, 5, 189, 0.37);
+  background-color: rgba(26, 35, 58, 0.4);
+  border-radius: 20px;
+}
+.ant-upload-list {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  /* background-color: rgba(26, 35, 58, 0.4);*/
+  font-size: 14px;
+  font-variant: tabular-nums;
+  list-style: none;
+  font-feature-settings: 'tnum', 'tnum';
+  line-height: 1.5715;
+}
+
+.ant-upload-list:hover {
+  color: rgba(26, 35, 58, 0.4);
+}
+.ant-upload-list-item {
+  color: #fff;
+}
