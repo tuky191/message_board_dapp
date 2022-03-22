@@ -6,7 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import { IPFS } from '../IPFS/IPFS';
 import * as Emoji from 'quill-emoji';
 import 'quill-emoji/dist/quill-emoji.css';
-
+import './MyCustomQuill.css';
 let BlockEmbed = Quill.import('blots/block/embed');
 class ImageBlot extends BlockEmbed {
   static create(value) {

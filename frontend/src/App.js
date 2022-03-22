@@ -14,6 +14,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Spinner from './components/Spinner/Spinner';
 import GenericModal from './components/Modals/GenericModal';
+
+//  ,
+
 const App = () => {
   const connectedWallet = useConnectedWallet();
 
@@ -29,9 +32,11 @@ const App = () => {
     subject: '',
     attachment: [],
   });
-  const { status } = useWallet();
+  const { status, recheckStatus } = useWallet();
   const allThreads = [];
   const [threads, setThreads] = useState([]);
+  const [footer, setFooter] = useState(null);
+  const [currentWaller, setCurrentWallet] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -61,7 +66,7 @@ const App = () => {
       'gloomycheddar',
       'BionicBeaver',
       'StoicFranklin',
-      'RustyTheCruty',
+      'RustyTheCrusty',
       'Juul',
     ];
     const avatars = [
@@ -177,16 +182,12 @@ const App = () => {
     // console.log(message)
     //delete message['created'];
     let result = await execute.updateProfile(connectedWallet, message);
-    console.log(result);
+    await refreshPosts();
     if (result.logs.length === 0) {
-      setTitle('Well, that was useless!');
-      setBody(
-        'Saving of the Profile is harder than it looks, does not compute - operation not permitted'
-      );
+      setBody(result.raw_log);
       setIsGenericModalVisible(true);
     }
     await checkIfUserHasProfile();
-    await refreshPosts();
   };
 
   const submitPost = async () => {
@@ -194,9 +195,14 @@ const App = () => {
     try {
       let message = forumMessage;
       message.created = convert_epoch(new Date()).toString();
+      //delete message['created'];
       message.attachment =
         message.attachment.length === 0 ? [] : message.attachment;
-      await execute.createMessage(connectedWallet, message);
+      let result = await execute.createMessage(connectedWallet, message);
+      if (result.logs.length === 0) {
+        setBody(result.raw_log);
+        setIsGenericModalVisible(true);
+      }
       setForumMessage({ content: '', subject: '', attachment: [] });
       await refreshPosts();
     } catch (e) {
@@ -206,6 +212,14 @@ const App = () => {
     setUpdating(false);
   };
 
+  useEffect(() => {
+    (async () => {
+      console.log(connectedWallet);
+      recheckStatus();
+      console.log(status);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
   return (
     <div>
       <ConnectWallet />
@@ -228,6 +242,7 @@ const App = () => {
         body={body}
         setIsGenericModalVisible={setIsGenericModalVisible}
         isGenericModalVisible={isGenericModalVisible}
+        footer={footer}
       ></GenericModal>
     </div>
   );

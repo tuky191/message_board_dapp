@@ -36,7 +36,7 @@
 }
 .well-white {
   background-color: white;
-  color: #454545;
+  color: white;
 }
 .well-blue {
   background-color: #2980b9;
@@ -159,6 +159,7 @@
   color: white;
 }
 
-.mini-profile-widget .details {
+.mini-profile-widget .details h4 {
   text-align: center;
+  color: white !important;
 }

@@ -8,6 +8,7 @@ const GenericModal = ({
   body,
   setIsGenericModalVisible,
   isGenericModalVisible,
+  footer,
 }) => {
   return (
     <Modal
@@ -17,6 +18,7 @@ const GenericModal = ({
       }}
       title={title}
       className='modal-dialog modal-lg'
+      footer={footer}
     >
       <div>
         <div>

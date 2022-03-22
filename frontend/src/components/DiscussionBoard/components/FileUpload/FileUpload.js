@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import './index.css';
+import './FileUpload.css';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { IPFS } from '../IPFS/IPFS';
