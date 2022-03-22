@@ -36,7 +36,7 @@ const App = () => {
   const allThreads = [];
   const [threads, setThreads] = useState([]);
   const [footer, setFooter] = useState(null);
-  const [currentWaller, setCurrentWallet] = useState('');
+  //const [currentWallet, setCurrentWallet] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -201,6 +201,8 @@ const App = () => {
       let result = await execute.createMessage(connectedWallet, message);
       if (result.logs.length === 0) {
         setBody(result.raw_log);
+        setTitle('');
+        setFooter(null);
         setIsGenericModalVisible(true);
       }
       setForumMessage({ content: '', subject: '', attachment: [] });
@@ -215,6 +217,7 @@ const App = () => {
   useEffect(() => {
     (async () => {
       console.log(connectedWallet);
+
       recheckStatus();
       console.log(status);
     })();
