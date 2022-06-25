@@ -9,9 +9,9 @@
   },
   "testnet": {
     "terra_forum": {
-      "codeId": "53618",
+      "codeId": "1237",
       "contractAddresses": {
-        "default": "terra1qw7lv9h03hnj8vmrlvn0zwmkzzujsmk84jk79y"
+        "default": "terra1grnq207cd5nr9c7xkv4gq8wf5e7evwdpj2m9mc"
       }
     }
   }
