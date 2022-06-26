@@ -3,17 +3,17 @@
   "name": "Terra Forum",
   "icons": [
     {
-      "src": "terra-logo.png",
+      "src": "terra2-logo.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "terra-logo.png",
+      "src": "terra2-logo.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "terra-logo.png",
+      "src": "terra2-logo.png",
       "type": "image/png",
       "sizes": "512x512"
     }
