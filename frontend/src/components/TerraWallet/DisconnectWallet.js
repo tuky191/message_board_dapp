@@ -1,4 +1,4 @@
-import { useWallet } from '@terra-dev/use-wallet';
+import { useWallet } from '@terra-money/wallet-provider';
 import Button from 'react-bootstrap/Button';
 
 export const DisconnectWallet = () => {

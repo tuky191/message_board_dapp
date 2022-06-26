@@ -1,5 +1,5 @@
-import { LCDClient, MsgExecuteContract, Fee } from "@terra-money/terra.js";
-import { contractAdress } from "./address";
+import { LCDClient, MsgExecuteContract, Fee } from '@terra-money/terra.js';
+import { contractAdress } from './address';
 
 // ==== utils ====
 
@@ -8,7 +8,7 @@ const until = Date.now() + 1000 * 60 * 60;
 const untilInterval = Date.now() + 1000 * 60;
 
 const _exec =
-  (msg, fee = new Fee(2000000, { uluna: 22660 })) =>
+  (msg, fee = new Fee(2000000, { uluna: 300000 })) =>
   async (wallet) => {
     const lcd = new LCDClient({
       URL: wallet.network.lcd,
@@ -53,10 +53,9 @@ export const createMessage = async (wallet, message) => {
       created: message.created,
       attachment: message.attachment,
       thread_id: message.thread_id,
-    }
+    },
   })(wallet);
-}
-
+};
 
 export const updateProfile = async (wallet, message) =>
   _exec({
@@ -64,11 +63,11 @@ export const updateProfile = async (wallet, message) =>
       handle: message.handle,
       avatar: message.avatar,
       bio: message.bio,
-      created: message.created
-    }
+      created: message.created,
+    },
   })(wallet);
 
 export const likeMessage = async (wallet, index) =>
   _exec({
-    like_message: { index }
+    like_message: { index },
   })(wallet);
