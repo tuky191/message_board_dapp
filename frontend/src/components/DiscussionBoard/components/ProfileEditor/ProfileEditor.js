@@ -27,9 +27,7 @@ const ProfileEditor = ({ userProfile, setUserProfile }) => {
       bio: value,
     }));
   };
-
-  const uploadFile = IPFS();
-
+  const { uploadFile } = IPFS();
   const uploadAvatar = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
